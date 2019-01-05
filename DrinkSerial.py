@@ -1,4 +1,6 @@
 ## This is the Serial Communication Library for MouthSmash (Drink Machine)
+## Written by Evan Brink
+
 import serial
 
 ## ---------------SERIAL FUNCITONS-----------------------
@@ -37,7 +39,7 @@ class DrinkSerial:
 
         packet = header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+CRC
         ser.write(packet)
-        
+
     def pour3(pump, time, pump2, time2, pump3, time3):
         header = b'\xff'
         length = b'\x0c'

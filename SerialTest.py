@@ -3,7 +3,7 @@
 import serial
 import time
 
-ser = serial.Serial('/dev/cu.usbmodem1411', 9600)  # open serial port
+ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # open serial port
 print(ser.name)         # check which port was really used
 
 while(1):
@@ -14,6 +14,15 @@ while(1):
     #print(ser.read(size = 4, timeout = 1))
     if(ser.in_waiting > 0):
         print(ser.read(size = ser.in_waiting))
-    
+
     time.sleep(2.5)
 
+    ser.write(b'\xef\x03\x01\x04\x01')
+    print("sent0")
+    time.sleep(2.5)
+
+    #print(ser.read(size = 4, timeout = 1))
+    if(ser.in_waiting > 0):
+        print(ser.read(size = ser.in_waiting))
+
+    time.sleep(2.5)
