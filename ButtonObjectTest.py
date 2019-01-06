@@ -21,7 +21,7 @@ cc11 = 1.15
 cc12 = 1
 
 ## ---------------SERIAL FUNCITONS-----------------------
-ser = serial.Serial('/dev/cu.usbmodem14121', 9600)  # open serial port
+ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # open serial port
 
 def ping():
     ser.write(b'\xff\x03\x01\x04\x00')
@@ -54,7 +54,7 @@ def pour2(pump, time, pump2, time2):
 
     packet = header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+CRC
     ser.write(packet)
-    
+
 def pour3(pump, time, pump2, time2, pump3, time3):
     header = b'\xff'
     length = b'\x0c'
@@ -137,7 +137,7 @@ button_box = Box(app, grid = [0,2], align = "top", layout = "grid")
 
 
 
-                
+
 ## Navigation functions
 def go_to_page(page):
     if page == 0:
@@ -150,9 +150,9 @@ def go_to_page(page):
         button_box.hide()
         button_box.disable()
 
-        
+
     if page == 1:
-        
+
         page_two.hide()
         page_two.disable()
         raw_page.hide()
@@ -162,11 +162,11 @@ def go_to_page(page):
         page_one.enable()
         button_box.enable()
         button_box.show()
-        
+
     if page == 2:
         page_one.hide()
         page_one.disable()
-        
+
         raw_page.hide()
         raw_page.disable()
 
@@ -199,7 +199,7 @@ def cmd01():
 
 def cmd02():
     ping()
-    
+
 mojitoButton = DrinkButton(cmd01, "MojitoButton.png", page_one, 0,0)
 pinaColadaButton = DrinkButton(cmd02, "Pina-Colada.jpg", page_one, 0,1)
 

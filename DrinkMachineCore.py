@@ -61,7 +61,7 @@ class Recipe:
         self.image = image
         self.message = addMessage
 
-DarkAndStormy = Recipe(ingredients = [rum, clubS, lime],
+DarkAndStormy = Recipe(ingredients = [rum, gingerB, lime],
                        proportions = [0.36,0.55,0.09], image =
                        "DarkAndStormy.jpg", addMessage = "Enjoy!")
 
@@ -154,7 +154,7 @@ def go_to_page(page):
     if page == 0:
         loading_page.show()
         loading_page.enable()
-    
+
 ## Button Box Setup
 button_one = PushButton(button_box, command = go_to_page, args = [1],
                         text = "1", grid = [0,0])

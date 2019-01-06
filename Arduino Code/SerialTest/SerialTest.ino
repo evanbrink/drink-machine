@@ -5,22 +5,22 @@
 
 // define pins
 #define DIRECTION A4
-#define PUMP1     8
-#define PUMP2     7
-#define PUMP3     10 //Expected
-#define PUMP4     9
-#define PUMP5     2  //Expected
-#define PUMP6     11 //Expected
-#define PUMP7     A2
-#define PUMP8     A3
-#define PUMP9     4
-#define PUMP10    3
-#define PUMP11    6
-#define PUMP12    5
+#define PUMP1     6
+#define PUMP2     5
+#define PUMP3     4
+#define PUMP4     3
+#define PUMP5     A2
+#define PUMP6     A3
+#define PUMP7     2
+#define PUMP8     11
+#define PUMP9     8
+#define PUMP10    7
+#define PUMP11    10
+#define PUMP12    9
 #define LEDPIN    13
 
-#define FW        HIGH
-#define BW        LOW
+#define FW        HIGH
+#define BW        LOW
 
 // The instructions
 enum eInstruction
