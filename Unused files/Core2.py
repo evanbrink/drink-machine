@@ -13,25 +13,23 @@ cranberry   = 6
 pineapple   = 7
 orange      = 8
 coconut     = 0
-gingerB     = 10
-clubS       = 11
+gingerB     = 0
+clubS       = 0
 lime        = 4
-tonic       = 12
+tonic       = 0
 coke        = 0
 lemonade    = 0
-
-
 
 #  ---------------GLOBAL VARIALBES-------------------
 window_height = 700
 window_width = 1000
 image_size = 250
 
-cup_size = 8    # in fl oz
-shot_size = 1.5 # in fl oz
+cup_size = 8     # in fl oz
+shot_size = 1.5  # in fl oz
 
 # nominal pump speed
-pump_speed = 1774 # ms / fl oz
+pump_speed = 1774  # ms / fl oz
 
 #  Calibration constants
 cc1 = 2.711
@@ -63,7 +61,7 @@ pr11 = 5500
 pr12 = 6000
 
 
-## ---------------SERIAL FUNCITONS-----------------------
+# -----------------SERIAL FUNCITONS-----------------------
 # open serial port
 ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
 # ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
