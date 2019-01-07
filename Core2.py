@@ -5,7 +5,7 @@ import time
 #  ---------------LOAD IN SETTINGS-------------------
 rum         = 1
 vodka       = 2
-tequila     = 0
+tequila     = 3
 gin         = 0
 peachS      = 9
 tripleS     = 5
@@ -320,10 +320,58 @@ MouthSmash = Recipe(ingredients=[vodka, lemonade, peachS], proportions=
                     [0.25, 0.65, 0.1], image = "MouthSmashButton.png",
                     addMessage = "Enjoy!", volume=cup_size)
 
+RumShot = Recipe(ingredients=[rum], proportions=[1], image="RumShotButton.png",
+                 addMessage="Enjoy!", volume=shot_size)
+
+VodkaShot = Recipe(ingredients=[vodka], proportions=
+                    [1], image = "VodkaShotButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
+
+TequilaShot = Recipe(ingredients=[tequila], proportions=
+                    [1], image = "TequilaShotButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
+
+GinShot = Recipe(ingredients=[gin], proportions=
+                    [1], image = "GinShotButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
+
+PeachSShot = Recipe(ingredients=[peachS], proportions=
+                    [1], image = "PeachSShotButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
+
+TripleSShot = Recipe(ingredients=[tripleS], proportions=
+                    [1], image = "TripleSShotButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
+
+CranberryShot = Recipe(ingredients=[cranberry], proportions=
+                    [1], image = "CranberryButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
+
+PineappleShot = Recipe(ingredients=[pineapple], proportions=
+                    [1], image = "PineappleButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
+
+OrangeShot = Recipe(ingredients=[orange], proportions=
+                    [1], image = "OrangeButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
+
+CoconutShot = Recipe(ingredients=[coconut], proportions=
+                    [1], image = "CoconutButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
+
+LimeShot = Recipe(ingredients=[lime], proportions=
+                    [1], image = "LimeButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
+
+LemonadeShot = Recipe(ingredients=[lemonade], proportions=
+                    [1], image = "LemonadeButton.png",
+                    addMessage = "Enjoy!", volume=shot_size)
 
 recipeList = [DarkAndStormy, Margarita, Cosmopolitan, RumPunch, MoscowMule,
               TequilaSunrise, VodkaCranberry, SexOnTheBeach, Mojito, PinaColada,
-              RumAndCoke, VodkaTonic, MouthSmash]
+              RumAndCoke, VodkaTonic, MouthSmash, RumShot, VodkaShot,
+              TequilaShot, GinShot, PeachSShot, TripleSShot, CranberryShot,
+              PineappleShot, OrangeShot, CoconutShot, LimeShot, LemonadeShot]
 
 #  -------------------GUI SETUP---------------------------
 app = App(title="MouthSmash", width=window_width,
@@ -338,9 +386,6 @@ page_two_text = Text(page_two, grid = [0,0], align = "top", text = "PAGE TWO")
 page_three = Box(app, grid=[0,0], align="top", layout="grid",
                enabled=False, visible=False)
 page_two_three = Text(page_three, grid=[0, 0], align="top", text="PAGE THREE")
-raw_page = Box(app, grid=[0,0], align="top", layout="grid",
-               enabled=False, visible=False)
-raw_page_text = Text(raw_page, grid = [0,0], align = "top", text = "RAW PAGE")
 loading_page = Box(app, grid=[0,0], align="top", layout="grid",
                enabled=False, visible=False)
 loading_page_text = Text(loading_page, grid = [0,0], align = "top",
@@ -357,8 +402,6 @@ def clear_screen():
     page_two.disable()
     page_three.hide()
     page_three.disable()
-    raw_page.hide()
-    raw_page.disable()
     button_box.hide()
     button_box.disable()
     loading_page.hide()
@@ -382,11 +425,6 @@ def go_to_page(page):
         page_three.enable()
         button_box.enable()
         button_box.show()
-    if page == -1:
-        raw_page.show()
-        raw_page.enable()
-        button_box.enable()
-        button_box.show()
     if page == 0:
         loading_page.show()
         loading_page.enable()
@@ -399,8 +437,6 @@ button_two = PushButton(button_box, command = go_to_page, args = [2],
                         text = "2", grid = [1,0])
 button_three = PushButton(button_box, command = go_to_page, args = [3],
                         text = "3", grid = [2,0])
-raw_button = PushButton(button_box, command = go_to_page, args = [-1],
-                        text = "Ingredients", grid = [3,0])
 
 
 def PrimePumps():
