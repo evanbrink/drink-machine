@@ -5,7 +5,7 @@ import time
 #  ---------------LOAD IN SETTINGS-------------------
 rum         = 1
 vodka       = 2
-tequila     = 3
+tequila     = 0
 gin         = 0
 peachS      = 9
 tripleS     = 5
@@ -64,7 +64,10 @@ pr12 = 6000
 
 
 ## ---------------SERIAL FUNCITONS-----------------------
-ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # open serial port
+# open serial port
+ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
+# ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
+
 
 def ping():
     ser.write(b'\xff\x03\x01\x04\x00')
@@ -231,8 +234,6 @@ class Recipe:
 
     # define instructions
     def cmd(self):
-        print("Recipe cmd called")
-
         if len(self.ing) == 1:
             pour(self.ing[0], int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]))
         if len(self.ing) == 2:
@@ -248,6 +249,13 @@ class Recipe:
             self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
             self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]))
 
+    # call this function to see if all the ingredients are available
+    def available(self):
+        avl = True
+        for x in self.ing:
+            if x == 0:
+                avl = False
+        return avl
 
 ## Button Object:
 ## Provide a recipe object, a drink volume (in fl oz), GUI page,
@@ -302,7 +310,7 @@ PinaColada = Recipe(ingredients=[rum, coconut, pineapple], proportions =
                     "Add 2 pumps simple syrup", volume=cup_size)
 
 RumAndCoke = Recipe(ingredients=[rum, coke, lime], proportions=[0.28, 0.69, 0.03],
-                    image = "RumAndCokeButton.png", addMessage="Enjoy!", volume=cup_size)
+                    image="RumAndCokeButton.png", addMessage="Enjoy!", volume=cup_size)
 
 VodkaTonic = Recipe(ingredients=[vodka, tonic, lime], proportions=
                     [0.31, 0.62, 0.08], image = "VodkaTonicButton.png",
@@ -312,16 +320,24 @@ MouthSmash = Recipe(ingredients=[vodka, lemonade, peachS], proportions=
                     [0.25, 0.65, 0.1], image = "MouthSmashButton.png",
                     addMessage = "Enjoy!", volume=cup_size)
 
+
+recipeList = [DarkAndStormy, Margarita, Cosmopolitan, RumPunch, MoscowMule,
+              TequilaSunrise, VodkaCranberry, SexOnTheBeach, Mojito, PinaColada,
+              RumAndCoke, VodkaTonic, MouthSmash]
+
 #  -------------------GUI SETUP---------------------------
 app = App(title="MouthSmash", width=window_width,
          height=window_height, layout="grid")
 
 #  Pages
-page_one = Box(app, grid=[0,0], align="top", layout="grid")
+page_one = Box(app, grid=[0, 0], align="top", layout="grid")
 page_one_text = Text(page_one, grid = [0,0], align = "top", text = "PAGE ONE")
 page_two = Box(app, grid=[0,0], align="top", layout="grid",
                enabled=False, visible=False)
 page_two_text = Text(page_two, grid = [0,0], align = "top", text = "PAGE TWO")
+page_three = Box(app, grid=[0,0], align="top", layout="grid",
+               enabled=False, visible=False)
+page_two_three = Text(page_three, grid=[0, 0], align="top", text="PAGE THREE")
 raw_page = Box(app, grid=[0,0], align="top", layout="grid",
                enabled=False, visible=False)
 raw_page_text = Text(raw_page, grid = [0,0], align = "top", text = "RAW PAGE")
@@ -329,22 +345,25 @@ loading_page = Box(app, grid=[0,0], align="top", layout="grid",
                enabled=False, visible=False)
 loading_page_text = Text(loading_page, grid = [0,0], align = "top",
                          text = "LOADING SCREEN")
-## Button Box
+# Button Box
 button_box = Box(app, grid = [0,1], align = "top", layout = "grid")
 
 
-## Navigation functions
+# Navigation functions
 def clear_screen():
     page_one.hide()
     page_one.disable()
     page_two.hide()
     page_two.disable()
+    page_three.hide()
+    page_three.disable()
     raw_page.hide()
     raw_page.disable()
     button_box.hide()
     button_box.disable()
     loading_page.hide()
     loading_page.disable()
+
 
 def go_to_page(page):
     clear_screen()
@@ -358,6 +377,11 @@ def go_to_page(page):
         page_two.enable()
         button_box.enable()
         button_box.show()
+    if page == 3:
+        page_three.show()
+        page_three.enable()
+        button_box.enable()
+        button_box.show()
     if page == -1:
         raw_page.show()
         raw_page.enable()
@@ -367,73 +391,114 @@ def go_to_page(page):
         loading_page.show()
         loading_page.enable()
 
-## Button Box Setup
+
+# Button Box Setup
 button_one = PushButton(button_box, command = go_to_page, args = [1],
                         text = "1", grid = [0,0])
 button_two = PushButton(button_box, command = go_to_page, args = [2],
                         text = "2", grid = [1,0])
+button_three = PushButton(button_box, command = go_to_page, args = [3],
+                        text = "3", grid = [2,0])
 raw_button = PushButton(button_box, command = go_to_page, args = [-1],
-                        text = "Ingredients", grid = [2,0])
+                        text = "Ingredients", grid = [3,0])
+
 
 def PrimePumps():
-    pour(1,pr1)
+    pour(1, pr1)
     time.sleep((pr1/1000.0))
-    pour(2,pr2)
+    pour(2, pr2)
     time.sleep((pr2/1000.0))
-    pour(3,pr3)
+    pour(3, pr3)
     time.sleep((pr3/1000.0))
-    pour(4,pr4)
+    pour(4, pr4)
     time.sleep((pr4/1000.0))
-    pour(5,pr5)
+    pour(5, pr5)
     time.sleep((pr5/1000.0))
-    pour(6,pr6)
+    pour(6, pr6)
     time.sleep((pr6/1000.0))
-    pour(7,pr7)
+    pour(7, pr7)
     time.sleep((pr7/1000.0))
-    pour(8,pr8)
+    pour(8, pr8)
     time.sleep((pr8/1000.0))
-    pour(9,pr9)
+    pour(9,  pr9)
     time.sleep((pr9/1000.0))
-    pour(10,pr10)
+    pour(10, pr10)
     time.sleep((pr10/1000.0))
-    pour(11,pr11)
+    pour(11, pr11)
     time.sleep((pr11/1000.0))
-    pour(12,pr12)
+    pour(12, pr12)
     time.sleep((pr12/1000.0))
+
 
 def EmptyPumps():
-    back(1,pr1)
+    back(1, pr1)
     time.sleep((pr1/1000.0))
-    back(2,pr2)
+    back(2, pr2)
     time.sleep((pr2/1000.0))
-    back(3,pr3)
+    back(3, pr3)
     time.sleep((pr3/1000.0))
-    back(4,pr4)
+    back(4, pr4)
     time.sleep((pr4/1000.0))
-    back(5,pr5)
+    back(5, pr5)
     time.sleep((pr5/1000.0))
-    back(6,pr6)
+    back(6, pr6)
     time.sleep((pr6/1000.0))
-    back(7,pr7)
+    back(7, pr7)
     time.sleep((pr7/1000.0))
-    back(8,pr8)
+    back(8, pr8)
     time.sleep((pr8/1000.0))
-    back(9,pr9)
+    back(9, pr9)
     time.sleep((pr9/1000.0))
-    back(10,pr10)
+    back(10, pr10)
     time.sleep((pr10/1000.0))
-    back(11,pr11)
+    back(11, pr11)
     time.sleep((pr11/1000.0))
-    back(12,pr12)
+    back(12, pr12)
     time.sleep((pr12/1000.0))
 
 
-mojitoButton = DrinkButton(Mojito, page_one, 0,0)
-rumPunchButton  = DrinkButton(RumPunch, page_one, 1,0)
-primeButton = PushButton(page_one, command = PrimePumps,
-                        text = "Prime", grid = [2,0])
-emptyButton = PushButton(page_one, command = EmptyPumps,
-                        text = "Empty", grid = [3,0])
+x = 0
+y = 0
+pg = 1
+
+buttonList = []
+for r in recipeList:
+    if r.available():
+        if pg == 1:
+            buttonList.append(DrinkButton(r, page_one, x, y))
+            x = x + 1
+            if x == 4:
+                x = 0
+                y = y + 1
+                if y == 2:
+                    y = 0
+                    pg = pg + 1
+        if pg == 2:
+            buttonList.append(DrinkButton(r, page_two, x, y))
+            x = x + 1
+            if x == 4:
+                x = 0
+                y = y + 1
+                if y == 2:
+                    y = 0
+                    pg = pg + 1
+        if pg == 3:
+            buttonList.append(DrinkButton(r, page_three, x, y))
+            x = x + 1
+            if x == 4:
+                x = 0
+                y = y + 1
+                if y == 2:
+                    y = 0
+                    pg = pg + 1
+
+
+# mojitoButton = DrinkButton(Mojito, page_one, 0,0)
+# rumPunchButton  = DrinkButton(RumPunch, page_one, 1,0)
+primeButton = PushButton(button_box, command = PrimePumps,
+                        text = "Prime", grid = [4,0])
+emptyButton = PushButton(button_box, command = EmptyPumps,
+                        text = "Empty", grid = [5,0])
 
 
 app.display()
