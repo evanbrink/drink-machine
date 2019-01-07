@@ -19,8 +19,8 @@
 #define PUMP12    9
 #define LEDPIN    13
 
-#define FW        HIGH
-#define BW        LOW
+#define FW        HIGH
+#define BW        LOW
 
 // The instructions
 enum eInstruction
@@ -85,7 +85,7 @@ void setup() {
 void loop() {
   //wait until there's a message
   if(Serial.available()) {
-    delay(15);
+    delay(30);
     // read instruction packet
     int bytesAvailable = Serial.available();
     byte inst[bytesAvailable];

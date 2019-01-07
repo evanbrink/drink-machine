@@ -1,7 +1,6 @@
 from guizero import *
-#import DrinkSerial
-import time
 import serial
+import time
 
 #  ---------------LOAD IN SETTINGS-------------------
 rum         = 1
@@ -28,18 +27,40 @@ window_height = 700
 window_width = 1000
 image_size = 250
 
+cup_size = 8    # in fl oz
+shot_size = 1.5 # in fl oz
+
+# nominal pump speed
+pump_speed = 1774 # ms / fl oz
+
 #  Calibration constants
-cc1 = 1
-cc2 = 0.98
-cc3 = 1.1
-cc4 = 1
-cc5 = 1.2
+cc1 = 2.711
+cc2 = 3.017
+cc3 = 2.583
+cc4 = 2.861
+cc5 = 1.007
 cc6 = 1
-cc7 = 0.8
-cc9 = 0.95
-cc10 = 1.02
-cc11 = 1.15
+cc7 = 1
+cc8 = 1
+cc9 = 1
+cc10 = 1
+cc11 = 1
 cc12 = 1
+calib = [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12]
+
+# pump prime times (in ms)
+pr1 = 13500
+pr2 = 13000
+pr3 = 13000
+pr4 = 13500
+pr5 = 5000
+pr6 = 5500
+pr7 = 6000
+pr8 = 5500
+pr9 = 5500
+pr10 = 5500
+pr11 = 5500
+pr12 = 6000
 
 
 ## ---------------SERIAL FUNCITONS-----------------------
@@ -122,157 +143,174 @@ def pour4(pump, time, pump2, time2, pump3, time3, pump4, time4):
     + time3L+time3H+pnum4+time4L+time4H+CRC)
     ser.write(packet)
 
-    def back(pump, time):
-        header = b'\xff'
-        length = b'\x06'
-        instr  = b'\x04'
-        pnum   = bytes([pump])
-        ptimeL = bytes([time%256])
-        ptimeH = bytes([int(time/256)])
-        CRC =  ((6+4+pump+time%256+int(time/256))%65536
-                ).to_bytes(2,byteorder='little')
+def back(pump, time):
+    header = b'\xff'
+    length = b'\x06'
+    instr  = b'\x04'
+    pnum   = bytes([pump])
+    ptimeL = bytes([time%256])
+    ptimeH = bytes([int(time/256)])
+    CRC =  ((6+4+pump+time%256+int(time/256))%65536
+            ).to_bytes(2,byteorder='little')
 
-        packet = header+length+instr+pnum+ptimeL+ptimeH+CRC
-        ser.write(packet)
+    packet = header+length+instr+pnum+ptimeL+ptimeH+CRC
+    ser.write(packet)
 
-    def back2(pump, time, pump2, time2):
-        header = b'\xff'
-        length = b'\x09'
-        instr  = b'\x04'
-        pnum1  = bytes([pump])
-        time1L = bytes([time%256])
-        time1H = bytes([int(time/256)])
-        pnum2  = bytes([pump2])
-        time2L = bytes([time2%256])
-        time2H = bytes([int(time2/256)])
-        CRC =  ((9+4+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)
-                )%65536).to_bytes(2,byteorder='little')
+def back2(pump, time, pump2, time2):
+    header = b'\xff'
+    length = b'\x09'
+    instr  = b'\x04'
+    pnum1  = bytes([pump])
+    time1L = bytes([time%256])
+    time1H = bytes([int(time/256)])
+    pnum2  = bytes([pump2])
+    time2L = bytes([time2%256])
+    time2H = bytes([int(time2/256)])
+    CRC =  ((9+4+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)
+            )%65536).to_bytes(2,byteorder='little')
 
-        packet = header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+CRC
-        ser.write(packet)
+    packet = header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+CRC
+    ser.write(packet)
 
-    def back3(pump, time, pump2, time2, pump3, time3):
-        header = b'\xff'
-        length = b'\x0c'
-        instr  = b'\x04'
-        pnum1  = bytes([pump])
-        time1L = bytes([time%256])
-        time1H = bytes([int(time/256)])
-        pnum2  = bytes([pump2])
-        time2L = bytes([time2%256])
-        time2H = bytes([int(time2/256)])
-        pnum3  = bytes([pump3])
-        time3L = bytes([time3%256])
-        time3H = bytes([int(time3/256)])
-        CRC =  ((12+4+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
-                pump3+time3%256+int(time3/256))%65536).to_bytes(2,byteorder='little')
+def back3(pump, time, pump2, time2, pump3, time3):
+    header = b'\xff'
+    length = b'\x0c'
+    instr  = b'\x04'
+    pnum1  = bytes([pump])
+    time1L = bytes([time%256])
+    time1H = bytes([int(time/256)])
+    pnum2  = bytes([pump2])
+    time2L = bytes([time2%256])
+    time2H = bytes([int(time2/256)])
+    pnum3  = bytes([pump3])
+    time3L = bytes([time3%256])
+    time3H = bytes([int(time3/256)])
+    CRC =  ((12+4+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
+            pump3+time3%256+int(time3/256))%65536).to_bytes(2,byteorder='little')
 
-        packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
-        + time3L+time3H+CRC)
-        ser.write(packet)
+    packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
+    + time3L+time3H+CRC)
+    ser.write(packet)
 
 
-    def back4(pump, time, pump2, time2, pump3, time3, pump4, time4):
-        header = b'\xff'
-        length = b'\x0f'
-        instr  = b'\x04'
-        pnum1  = bytes([pump])
-        time1L = bytes([time%256])
-        time1H = bytes([int(time/256)])
-        pnum2  = bytes([pump2])
-        time2L = bytes([time2%256])
-        time2H = bytes([int(time2/256)])
-        pnum3  = bytes([pump3])
-        time3L = bytes([time3%256])
-        time3H = bytes([int(time3/256)])
-        pnum4  = bytes([pump4])
-        time4L = bytes([time4%256])
-        time4H = bytes([int(time4/256)])
-        CRC =  ((15+4+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
-                pump3+time3%256+int(time3/256)+pump4+time4%256+int(time4/256)
-                 )%65536).to_bytes(2,byteorder='little')
+def back4(pump, time, pump2, time2, pump3, time3, pump4, time4):
+    header = b'\xff'
+    length = b'\x0f'
+    instr  = b'\x04'
+    pnum1  = bytes([pump])
+    time1L = bytes([time%256])
+    time1H = bytes([int(time/256)])
+    pnum2  = bytes([pump2])
+    time2L = bytes([time2%256])
+    time2H = bytes([int(time2/256)])
+    pnum3  = bytes([pump3])
+    time3L = bytes([time3%256])
+    time3H = bytes([int(time3/256)])
+    pnum4  = bytes([pump4])
+    time4L = bytes([time4%256])
+    time4H = bytes([int(time4/256)])
+    CRC =  ((15+4+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
+            pump3+time3%256+int(time3/256)+pump4+time4%256+int(time4/256)
+             )%65536).to_bytes(2,byteorder='little')
 
-        packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
-        + time3L+time3H+pnum4+time4L+time4H+CRC)
-        ser.write(packet)
+    packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
+    + time3L+time3H+pnum4+time4L+time4H+CRC)
+    ser.write(packet)
+    print("sent:")
+    print(packet)
 
 
 ## ---------------CUSTOM OBJECTS-------------------------
-## Button Object:
-## Provide a command for when button is clicked, GUI page,
-## and x,y coordinates for location on the page
-class DrinkButton:
-    def __init__(self, command, img, page, x, y):
-        self.button = Picture(page, grid = [x,y], image =img)
-        self.button.when_clicked = command
-
-## Pump Object:
-## Provide the pump number and calibration constant
-class Pump:
-    def __init__(self, num, calib):
-        self.number = num
-        self.calibration = calib
-
 class Recipe:
-    def __init__(self, ingredients, proportions, image, addMessage):
+    def __init__(self, ingredients, proportions, image, addMessage, volume):
         self.ing = ingredients
         self.prop = proportions
         self.image = image
         self.message = addMessage
+        self.vol = volume
+
+    # define instructions
+    def cmd(self):
+        print("Recipe cmd called")
+
+        if len(self.ing) == 1:
+            pour(self.ing[0], int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]))
+        if len(self.ing) == 2:
+            pour2(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]))
+        if len(self.ing) == 3:
+            pour3(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
+            self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]))
+        if len(self.ing) == 4:
+            pour4(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
+            self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
+            self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]))
+
+
+## Button Object:
+## Provide a recipe object, a drink volume (in fl oz), GUI page,
+## and x,y coordinates for location on the page
+class DrinkButton:
+    def __init__(self, recipe, page, x, y):
+        self.button = Picture(page, grid = [x,y], image =recipe.image)
+        self.button.when_clicked = recipe.cmd
+
 
 DarkAndStormy = Recipe(ingredients = [rum, gingerB, lime],
                        proportions = [0.36,0.55,0.09], image =
-                       "DarkAndStormyButton.png", addMessage = "Enjoy!")
+                       "DarkAndStormyButton.png", addMessage = "Enjoy!", volume=cup_size)
 
 Margarita = Recipe(ingredients = [tequila, lime, tripleS],
                    proportions = [0.57, 0.29, 0.14], image =
                    "MargaritaButton.png", addMessage =
-                   "Suggested: Add 1 pump Simple Syrup")
+                   "Suggested: Add 1 pump Simple Syrup", volume=cup_size)
 
 Cosmopolitan = Recipe(ingredients = [vodka, lime, tripleS, cranberry],
                       proportions = [0.67, 0.11, 0.11, 0.11], image =
-                      "CosmopolitanButton.png", addMessage = "Enjoy!")
+                      "CosmopolitanButton.png", addMessage = "Enjoy!", volume=cup_size)
 
 RumPunch = Recipe(ingredients = [rum, orange, pineapple, cranberry],
                   proportions = [0.31, 0.23, 0.23, 0.23], image =
                   "RumPunchButton.png", addMessage =
-                  "Suggested: Add 1 pump Grenadine")
+                  "Suggested: Add 1 pump Grenadine", volume=cup_size)
 
 MoscowMule = Recipe(ingredients = [vodka, gingerB, lime],
                     proportions = [0.24, 0.71, 0.06], image =
-                    "MoscowMuleButton.png", addMessage = "Enjoy!")
+                    "MoscowMuleButton.png", addMessage = "Enjoy!", volume=cup_size)
 
 TequilaSunrise = Recipe(ingredients = [tequila, orange],
                         proportions = [0.33, 0.67], image =
                         "TequilaSunriseButton.png", addMessage =
-                        "Add 2 pumps Grenadine")
+                        "Add 2 pumps Grenadine", volume=cup_size)
 
 VodkaCranberry = Recipe(ingredients = [vodka, cranberry, lime],
                         proportions = [0.15, 0.77, 0.08], image =
-                        "VodkaCranberryButton.png", addMessage = "Enjoy!")
+                        "VodkaCranberryButton.png", addMessage = "Enjoy!", volume=cup_size)
 
 SexOnTheBeach = Recipe(ingredients = [vodka, peachS, orange, cranberry],
                        proportions = [0.13, 0.13, 0.37, 0.37], image =
-                       "SexOnTheBeachButton.png", addMessage = "Enjoy!")
+                       "SexOnTheBeachButton.png", addMessage = "Enjoy!", volume=cup_size)
 
 Mojito = Recipe(ingredients = [rum, lime, clubS], proportions =
                 [0.23, 0.15, 0.62], image = "MojitoButton.png", addMessage =
-                "Add 2 pumps simple syrup + 2 pumps mint syrup")
+                "Add 2 pumps simple syrup + 2 pumps mint syrup", volume=cup_size)
 
 PinaColada = Recipe(ingredients=[rum, coconut, pineapple], proportions =
                     [0.2, 0.4, 0.4], image = "PinaColadaButton.png", addMessage=
-                    "Add 2 pumps simple syrup")
+                    "Add 2 pumps simple syrup", volume=cup_size)
 
 RumAndCoke = Recipe(ingredients=[rum, coke, lime], proportions=[0.28, 0.69, 0.03],
-                    image = "RumAndCokeButton.png", addMessage="Enjoy!")
+                    image = "RumAndCokeButton.png", addMessage="Enjoy!", volume=cup_size)
 
 VodkaTonic = Recipe(ingredients=[vodka, tonic, lime], proportions=
                     [0.31, 0.62, 0.08], image = "VodkaTonicButton.png",
-                    addMessage="Enjoy!")
+                    addMessage="Enjoy!", volume=cup_size)
 
 MouthSmash = Recipe(ingredients=[vodka, lemonade, peachS], proportions=
                     [0.25, 0.65, 0.1], image = "MouthSmashButton.png",
-                    addMessage = "Enjoy!")
+                    addMessage = "Enjoy!", volume=cup_size)
 
 #  -------------------GUI SETUP---------------------------
 app = App(title="MouthSmash", width=window_width,
@@ -337,40 +375,65 @@ button_two = PushButton(button_box, command = go_to_page, args = [2],
 raw_button = PushButton(button_box, command = go_to_page, args = [-1],
                         text = "Ingredients", grid = [2,0])
 
-def cmd01():
-    print("BUTTON1 PRESSED!")
-    pour(1,1000)
+def PrimePumps():
+    pour(1,pr1)
+    time.sleep((pr1/1000.0))
+    pour(2,pr2)
+    time.sleep((pr2/1000.0))
+    pour(3,pr3)
+    time.sleep((pr3/1000.0))
+    pour(4,pr4)
+    time.sleep((pr4/1000.0))
+    pour(5,pr5)
+    time.sleep((pr5/1000.0))
+    pour(6,pr6)
+    time.sleep((pr6/1000.0))
+    pour(7,pr7)
+    time.sleep((pr7/1000.0))
+    pour(8,pr8)
+    time.sleep((pr8/1000.0))
+    pour(9,pr9)
+    time.sleep((pr9/1000.0))
+    pour(10,pr10)
+    time.sleep((pr10/1000.0))
+    pour(11,pr11)
+    time.sleep((pr11/1000.0))
+    pour(12,pr12)
+    time.sleep((pr12/1000.0))
 
-def cmd02():
-    print("BUTTON2 PRESSED!")
+def EmptyPumps():
+    back(1,pr1)
+    time.sleep((pr1/1000.0))
+    back(2,pr2)
+    time.sleep((pr2/1000.0))
+    back(3,pr3)
+    time.sleep((pr3/1000.0))
+    back(4,pr4)
+    time.sleep((pr4/1000.0))
+    back(5,pr5)
+    time.sleep((pr5/1000.0))
+    back(6,pr6)
+    time.sleep((pr6/1000.0))
+    back(7,pr7)
+    time.sleep((pr7/1000.0))
+    back(8,pr8)
+    time.sleep((pr8/1000.0))
+    back(9,pr9)
+    time.sleep((pr9/1000.0))
+    back(10,pr10)
+    time.sleep((pr10/1000.0))
+    back(11,pr11)
+    time.sleep((pr11/1000.0))
+    back(12,pr12)
+    time.sleep((pr12/1000.0))
 
-def cmd03():
-    print("BUTTON3 PRESSED!")
-    print(DarkAndStormy.ing)
 
-def cmd04():
-    print("Margarita:")
-    print(Margarita.ing)
+mojitoButton = DrinkButton(Mojito, page_one, 0,0)
+rumPunchButton  = DrinkButton(RumPunch, page_one, 1,0)
+primeButton = PushButton(page_one, command = PrimePumps,
+                        text = "Prime", grid = [2,0])
+emptyButton = PushButton(page_one, command = EmptyPumps,
+                        text = "Empty", grid = [3,0])
 
-def cmd05():
-    print("Cosmo:")
-    print(Cosmopolitan.ing)
-
-def cmd06():
-    print("Rum Punch:")
-    print(RumPunch.ing)
-
-def cmd07():
-    print("Moscow Mule")
-    print(MoscowMule.ing)
-
-mojitoButton = DrinkButton(cmd01, "MojitoButton.png", page_one, 0,0)
-pinaColadaButton = DrinkButton(cmd02, "PinaColadaButton.png", page_one, 1,0)
-darkAndStormyButton = DrinkButton(cmd03, DarkAndStormy.image, page_one, 2,0)
-cosmopolitanButton = DrinkButton(cmd05, Cosmopolitan.image, page_one, 0,1)
-margaritaButton = DrinkButton(cmd04, Margarita.image, page_two, 0,0)
-#cosmopolitanButton = DrinkButton(cmd05, Cosmopolitan.image, page_two, 1,0)
-rumPunchButton = DrinkButton(cmd06, RumPunch.image, page_two, 2,0)
-moscowMuleButton = DrinkButton(cmd07, MoscowMule.image, page_two, 0,1)
 
 app.display()
