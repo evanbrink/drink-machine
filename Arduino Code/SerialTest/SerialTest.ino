@@ -167,6 +167,36 @@ void loop() {
           unsigned long t4 = inst[13] + ((unsigned long) inst[14]) * 256;
           pumpFour(p1,t1,p2,t2,p3,t3,p4,t4,fw);
         }
+        // 5 ingredients
+        if(bytesAvailable == 20) {
+          int p1 = inst[3];
+          unsigned long t1 = inst[4] + ((unsigned long) inst[5]) * 256;
+          int p2 = inst[6];
+          unsigned long t2 = inst[7] + ((unsigned long) inst[8]) * 256;
+          int p3 = inst[9];
+          unsigned long t3 = inst[10] + ((unsigned long) inst[11]) * 256;
+          int p4 = inst[12];
+          unsigned long t4 = inst[13] + ((unsigned long) inst[14]) * 256;
+          int p5 = inst[15];
+          unsigned long t5 = inst[16] + ((unsigned long) inst[17]) * 256;
+          pumpFive(p1,t1,p2,t2,p3,t3,p4,t4,p5,t5,fw);
+        }
+        // 6 ingredients
+        if(bytesAvailable == 23) {
+          int p1 = inst[3];
+          unsigned long t1 = inst[4] + ((unsigned long) inst[5]) * 256;
+          int p2 = inst[6];
+          unsigned long t2 = inst[7] + ((unsigned long) inst[8]) * 256;
+          int p3 = inst[9];
+          unsigned long t3 = inst[10] + ((unsigned long) inst[11]) * 256;
+          int p4 = inst[12];
+          unsigned long t4 = inst[13] + ((unsigned long) inst[14]) * 256;
+          int p5 = inst[15];
+          unsigned long t5 = inst[16] + ((unsigned long) inst[17]) * 256;
+          int p6 = inst[18];
+          unsigned long t6 = inst[19] + ((unsigned long) inst[20]) * 256;
+          pumpSix(p1,t1,p2,t2,p3,t3,p4,t4,p5,t5,p6,t6,fw);
+        }
         sendResponse(I_Pour, S_Success);
       }
       // REVERSE
@@ -407,6 +437,118 @@ void pumpFour(int p1,unsigned long t1,int p2,unsigned long t2,int p3,
     if(millis() >= st + t4) {
       complete4 = true;
       stopPump(p4);
+    }
+  }
+}
+
+// Helper function for pumping five ingredients
+// p1 = first pump number
+// t1 = first pump time in ms
+// ...
+// fw = true for pumping forward
+void pumpFive(int p1,unsigned long t1,int p2,unsigned long t2,int p3,
+  unsigned long t3,int p4,unsigned long t4,int p5,unsigned long t5,boolean fw) {
+  // set direction
+  if(fw)
+    digitalWrite(DIRECTION, FW);
+  else
+    digitalWrite(DIRECTION, BW);
+
+  // start timer
+  unsigned long st = millis();
+  // start pumping
+  startPump(p1);
+  startPump(p2);
+  startPump(p3);
+  startPump(p4);
+  startPump(p5);
+
+  // wait until time is up
+  boolean complete1 = false;
+  boolean complete2 = false;
+  boolean complete3 = false;
+  boolean complete4 = false;
+  boolean complete5 = false;
+  while(!(complete1 && complete2 && complete3 && complete4 && complete5)) {
+    if(millis() >= st + t1) {
+      complete1 = true;
+      stopPump(p1);
+    }
+    if(millis() >= st + t2) {
+      complete2 = true;
+      stopPump(p2);
+    }
+    if(millis() >= st + t3) {
+      complete3 = true;
+      stopPump(p3);
+    }
+    if(millis() >= st + t4) {
+      complete4 = true;
+      stopPump(p4);
+    }
+    if(millis() >= st + t5) {
+      complete5 = true;
+      stopPump(p5);
+    }
+  }
+}
+
+// Helper function for pumping six ingredients
+// p1 = first pump number
+// t1 = first pump time in ms
+// ...
+// fw = true for pumping forward
+void pumpSix(int p1,unsigned long t1,int p2,unsigned long t2,int p3,
+  unsigned long t3,int p4,unsigned long t4,int p5,unsigned long t5,int p6,
+  unsigned long t6,boolean fw) {
+  // set direction
+  if(fw)
+    digitalWrite(DIRECTION, FW);
+  else
+    digitalWrite(DIRECTION, BW);
+
+  // start timer
+  unsigned long st = millis();
+  // start pumping
+  startPump(p1);
+  startPump(p2);
+  startPump(p3);
+  startPump(p4);
+  startPump(p5);
+  startPump(p6);
+
+  // wait until time is up
+  boolean complete1 = false;
+  boolean complete2 = false;
+  boolean complete3 = false;
+  boolean complete4 = false;
+  boolean complete5 = false;
+  boolean complete6 = false;
+  while(!(complete1 && complete2 && complete3 && complete4 && complete5 &&
+          complete6)) {
+    if(millis() >= st + t1) {
+      complete1 = true;
+      stopPump(p1);
+    }
+    if(millis() >= st + t2) {
+      complete2 = true;
+      stopPump(p2);
+    }
+    if(millis() >= st + t3) {
+      complete3 = true;
+      stopPump(p3);
+    }
+    if(millis() >= st + t4) {
+      complete4 = true;
+      stopPump(p4);
+    }
+    if(millis() >= st + t5) {
+      complete5 = true;
+      stopPump(p5);
+    }
+    if(millis() >= st + t6) {
+      complete6 = true;
+      stopPump(p6);
     }
   }
 }

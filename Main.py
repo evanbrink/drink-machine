@@ -48,8 +48,8 @@ calib = [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12]
 
 # -----------------SERIAL FUNCITONS-----------------------
 # open serial port
-#ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
-ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
+ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
+#ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
 
 
 def ping():
@@ -127,6 +127,65 @@ def pour4(pump, time, pump2, time2, pump3, time3, pump4, time4):
 
     packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
     + time3L+time3H+pnum4+time4L+time4H+CRC)
+    ser.write(packet)
+
+def pour5(pump, time, pump2, time2, pump3, time3, pump4, time4, pump5, time5):
+    header = b'\xff'
+    length = b'\x12'
+    instr  = b'\x02'
+    pnum1  = bytes([pump])
+    time1L = bytes([time%256])
+    time1H = bytes([int(time/256)])
+    pnum2  = bytes([pump2])
+    time2L = bytes([time2%256])
+    time2H = bytes([int(time2/256)])
+    pnum3  = bytes([pump3])
+    time3L = bytes([time3%256])
+    time3H = bytes([int(time3/256)])
+    pnum4  = bytes([pump4])
+    time4L = bytes([time4%256])
+    time4H = bytes([int(time4/256)])
+    pnum5  = bytes([pump5])
+    time5L = bytes([time5%256])
+    time5H = bytes([int(time5/256)])
+    CRC =  ((18+2+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
+            pump3+time3%256+int(time3/256)+pump4+time4%256+int(time4/256)+pump5+
+            time5%256+int(time5/256))%65536).to_bytes(2,byteorder='little')
+
+    packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
+    + time3L+time3H+pnum4+time4L+time4H+pnum5+time5L+time5H+CRC)
+    ser.write(packet)
+
+def pour6(pump, time, pump2, time2, pump3, time3, pump4, time4, pump5, time5,
+          pump6, time6):
+    header = b'\xff'
+    length = b'\x15'
+    instr  = b'\x02'
+    pnum1  = bytes([pump])
+    time1L = bytes([time%256])
+    time1H = bytes([int(time/256)])
+    pnum2  = bytes([pump2])
+    time2L = bytes([time2%256])
+    time2H = bytes([int(time2/256)])
+    pnum3  = bytes([pump3])
+    time3L = bytes([time3%256])
+    time3H = bytes([int(time3/256)])
+    pnum4  = bytes([pump4])
+    time4L = bytes([time4%256])
+    time4H = bytes([int(time4/256)])
+    pnum5  = bytes([pump5])
+    time5L = bytes([time5%256])
+    time5H = bytes([int(time5/256)])
+    pnum6  = bytes([pump5])
+    time6L = bytes([time5%256])
+    time6H = bytes([int(time5/256)])
+    CRC =  ((21+2+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
+            pump3+time3%256+int(time3/256)+pump4+time4%256+int(time4/256)+pump5+
+            time5%256+int(time5/256)+pump6+time6%256+int(time6/256))%
+            65536).to_bytes(2,byteorder='little')
+
+    packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
+    + time3L+time3H+pnum4+time4L+time4H+pnum5+time5L+time5H+pnum6+time6L+time6H+CRC)
     ser.write(packet)
 
 def back(pump, time):
@@ -231,6 +290,19 @@ class Recipe:
             self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
             self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
             self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]))
+        if len(self.ing) == 5:
+            pour5(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
+            self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
+            self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
+            self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]))
+        if len(self.ing) == 6:
+            pour6(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
+            self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
+            self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
+            self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]),
+            self.ing[5], int(self.vol*self.prop[5]*pump_speed*calib[self.ing[5]-1]))
 
     # call this function to see if all the ingredients are available
     def available(self):
@@ -262,8 +334,8 @@ Cosmopolitan = Recipe(ingredients = [vodka, lime, tripleS, cranberry],
                       proportions = [0.67, 0.11, 0.11, 0.11], image =
                       "CosmopolitanButton.png", addMessage = "Enjoy!", volume=cup_size)
 
-RumPunch = Recipe(ingredients = [rum, orange, pineapple, cranberry],
-                  proportions = [0.31, 0.23, 0.23, 0.23], image =
+RumPunch = Recipe(ingredients = [rum, orange, pineapple, cranberry, lime],
+                  proportions = [0.29, 0.22, 0.22, 0.22, 0.05], image =
                   "RumPunchButton.png", addMessage =
                   "Suggested: Add 1 pump Grenadine", volume=cup_size)
 
@@ -429,8 +501,8 @@ pg = 1
 buttonList = []
 for r in recipeList:
     if r.available():
-        if pg == 1:
-            buttonList.append(DrinkButton(r, page_one, x, y))
+        if pg == 3:
+            buttonList.append(DrinkButton(r, page_three, x, y))
             x = x + 1
             if x == 4:
                 x = 0
@@ -447,8 +519,8 @@ for r in recipeList:
                 if y == 2:
                     y = 0
                     pg = pg + 1
-        if pg == 3:
-            buttonList.append(DrinkButton(r, page_three, x, y))
+        if pg == 1:
+            buttonList.append(DrinkButton(r, page_one, x, y))
             x = x + 1
             if x == 4:
                 x = 0
