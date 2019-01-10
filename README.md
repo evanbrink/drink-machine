@@ -8,7 +8,13 @@ sudo rm -R drink-machine
 git clone https://github.com/evanbrink/drink-machine
 ```
 
-To run the program:
+To run the program, you need to run setup first.  This will help with priming the pumps and can also be used later to empty the pumps.  Just run the following in terminal:
+```
+cd ~/Desktop/drink-machine
+python3 SetupTools.py
+```
+
+To open the main User Interface, run the following:
 ```
 cd ~/Desktop/drink-machine
 python3 Main.py
