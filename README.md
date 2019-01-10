@@ -8,7 +8,7 @@ cd ~/Desktop
 sudo rm -R drink-machine
 git clone https://github.com/evanbrink/drink-machine
 ```
-The arduino code main.ino should be uploaded to the arduino.  
+The arduino code Main.ino should be uploaded to the arduino.  
 
 # Setup and Running
 
