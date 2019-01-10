@@ -46,21 +46,6 @@ cc11 = 1
 cc12 = 1
 calib = [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12]
 
-# pump prime times (in ms)
-pr1 = 13500
-pr2 = 13000
-pr3 = 13000
-pr4 = 13500
-pr5 = 5000
-pr6 = 5500
-pr7 = 6000
-pr8 = 5500
-pr9 = 5500
-pr10 = 5500
-pr11 = 5500
-pr12 = 6000
-
-
 # -----------------SERIAL FUNCITONS-----------------------
 # open serial port
 #ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
@@ -437,60 +422,6 @@ button_three = PushButton(button_box, command = go_to_page, args = [3],
                         text = "3", grid = [2,0])
 
 
-def PrimePumps():
-    pour(1, pr1)
-    time.sleep((pr1/1000.0))
-    pour(2, pr2)
-    time.sleep((pr2/1000.0))
-    pour(3, pr3)
-    time.sleep((pr3/1000.0))
-    pour(4, pr4)
-    time.sleep((pr4/1000.0))
-    pour(5, pr5)
-    time.sleep((pr5/1000.0))
-    pour(6, pr6)
-    time.sleep((pr6/1000.0))
-    pour(7, pr7)
-    time.sleep((pr7/1000.0))
-    pour(8, pr8)
-    time.sleep((pr8/1000.0))
-    pour(9,  pr9)
-    time.sleep((pr9/1000.0))
-    pour(10, pr10)
-    time.sleep((pr10/1000.0))
-    pour(11, pr11)
-    time.sleep((pr11/1000.0))
-    pour(12, pr12)
-    time.sleep((pr12/1000.0))
-
-
-def EmptyPumps():
-    back(1, pr1)
-    time.sleep((pr1/1000.0))
-    back(2, pr2)
-    time.sleep((pr2/1000.0))
-    back(3, pr3)
-    time.sleep((pr3/1000.0))
-    back(4, pr4)
-    time.sleep((pr4/1000.0))
-    back(5, pr5)
-    time.sleep((pr5/1000.0))
-    back(6, pr6)
-    time.sleep((pr6/1000.0))
-    back(7, pr7)
-    time.sleep((pr7/1000.0))
-    back(8, pr8)
-    time.sleep((pr8/1000.0))
-    back(9, pr9)
-    time.sleep((pr9/1000.0))
-    back(10, pr10)
-    time.sleep((pr10/1000.0))
-    back(11, pr11)
-    time.sleep((pr11/1000.0))
-    back(12, pr12)
-    time.sleep((pr12/1000.0))
-
-
 x = 0
 y = 0
 pg = 1
@@ -525,14 +456,5 @@ for r in recipeList:
                 if y == 2:
                     y = 0
                     pg = pg + 1
-
-
-# mojitoButton = DrinkButton(Mojito, page_one, 0,0)
-# rumPunchButton  = DrinkButton(RumPunch, page_one, 1,0)
-primeButton = PushButton(button_box, command = PrimePumps,
-                        text = "Prime", grid = [4,0])
-emptyButton = PushButton(button_box, command = EmptyPumps,
-                        text = "Empty", grid = [5,0])
-
 
 app.display()
