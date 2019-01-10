@@ -48,8 +48,8 @@ calib = [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12]
 
 # -----------------SERIAL FUNCITONS-----------------------
 # open serial port
-ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
-#ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
+#ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
+ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
 
 
 def ping():
