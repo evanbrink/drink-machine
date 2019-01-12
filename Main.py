@@ -340,15 +340,18 @@ button_three = PushButton(button_box, command = go_to_page, args = [3],
 
 ## --------------- RECIPE SETUP -------------------------
 class Recipe:
-    def __init__(self, ingredients, proportions, image, addMessage, volume):
+    def __init__(self, ingredients, proportions, image, volume,
+                 startMessage = None, endMessage = None):
         self.ing = ingredients
         self.prop = proportions
         self.image = image
-        self.message = addMessage
+        self.startMessage = startMessage if startMessage is not None else "Place cup below"
+        self.endMessage = endMessage if endMessage is not None else "Enjoy!"
         self.vol = volume
 
     # define instructions
     def cmd(self):
+        info(title="Hit OK when ready", text=self.startMessage)
         go_to_page(0)
         if len(self.ing) == 1:
             pour(self.ing[0], int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]))
@@ -379,7 +382,7 @@ class Recipe:
             self.ing[5], int(self.vol*self.prop[5]*pump_speed*calib[self.ing[5]-1]))
         go_to_page(1)
         app.update()
-        info(title="Finished!", text=self.message)
+        info(title="Finished!", text=self.endMessage)
 
 
     # call this function to see if all the ingredients are available
@@ -401,106 +404,110 @@ class DrinkButton:
 
 DarkAndStormy = Recipe(ingredients = [rum, gingerB, lime],
                        proportions = [0.36,0.55,0.09], image =
-                       "DarkAndStormyButton.png", addMessage = "Enjoy!", volume=cup_size)
+                       "DarkAndStormyButton.png", endMessage =
+                       "Top off with Ginger Beer\nSuggested: Add a dash of Bitters", volume=cup_size)
 
 Margarita = Recipe(ingredients = [tequila, lime, tripleS],
                    proportions = [0.57, 0.29, 0.14], image =
-                   "MargaritaButton.png", addMessage =
+                   "MargaritaButton.png", startMessage =
                    "Suggested: Add 1 pump Simple Syrup", volume=cup_size)
 
 Cosmopolitan = Recipe(ingredients = [vodka, lime, tripleS, cranberry],
                       proportions = [0.67, 0.11, 0.11, 0.11], image =
-                      "CosmopolitanButton.png", addMessage = "Enjoy!", volume=cup_size)
+                      "CosmopolitanButton.png", volume=cup_size)
 
 RumPunch = Recipe(ingredients = [rum, orange, pineapple, cranberry, lime],
                   proportions = [0.29, 0.22, 0.22, 0.22, 0.05], image =
-                  "RumPunchButton.png", addMessage =
+                  "RumPunchButton.png", startMessage =
                   "Suggested: Add 1 pump Grenadine", volume=cup_size)
 
 MoscowMule = Recipe(ingredients = [vodka, gingerB, lime],
                     proportions = [0.24, 0.71, 0.06], image =
-                    "MoscowMuleButton.png", addMessage = "Enjoy!", volume=cup_size)
+                    "MoscowMuleButton.png", volume=cup_size,
+                    endMessage="Top off with Ginger Beer")
 
 TequilaSunrise = Recipe(ingredients = [tequila, orange],
                         proportions = [0.33, 0.67], image =
-                        "TequilaSunriseButton.png", addMessage =
+                        "TequilaSunriseButton.png", startMessage =
                         "Suggested: Add 2 pumps Grenadine", volume=cup_size)
 
 VodkaCranberry = Recipe(ingredients = [vodka, cranberry, lime],
                         proportions = [0.15, 0.77, 0.08], image =
-                        "VodkaCranberryButton.png", addMessage = "Enjoy!", volume=cup_size)
+                        "VodkaCranberryButton.png", volume=cup_size)
 
 SexOnTheBeach = Recipe(ingredients = [vodka, peachS, orange, cranberry],
                        proportions = [0.13, 0.13, 0.37, 0.37], image =
-                       "SexOnTheBeachButton.png", addMessage = "Enjoy!", volume=cup_size)
+                       "SexOnTheBeachButton.png", volume=cup_size)
 
 Mojito = Recipe(ingredients = [rum, lime, clubS], proportions =
-                [0.23, 0.15, 0.62], image = "MojitoButton.png", addMessage =
-                "Suggested: Add 2 pumps simple syrup + 2 pumps mint syrup", volume=cup_size)
+                [0.23, 0.15, 0.62], image = "MojitoButton.png", startMessage =
+                "Suggested: Add 2 pumps simple syrup + 2 pumps mint syrup",
+                endMessage="Top off with club soda", volume=cup_size)
 
 PinaColada = Recipe(ingredients=[rum, coconut, pineapple], proportions =
-                    [0.2, 0.4, 0.4], image = "PinaColadaButton.png", addMessage=
+                    [0.2, 0.4, 0.4], image = "PinaColadaButton.png", endMessage=
                     "Suggested: Add 2 pumps simple syrup", volume=cup_size)
 
 RumAndCoke = Recipe(ingredients=[rum, coke, lime], proportions=[0.28, 0.69, 0.03],
-                    image="RumAndCokeButton.png", addMessage="Enjoy!", volume=cup_size)
+                    image="RumAndCokeButton.png",
+                    endMessage="Top off with Coke", volume=cup_size)
 
 VodkaTonic = Recipe(ingredients=[vodka, tonic, lime], proportions=
                     [0.31, 0.62, 0.08], image = "VodkaTonicButton.png",
-                    addMessage="Enjoy!", volume=cup_size)
+                    endMessage="Top off with Tonic Water", volume=cup_size)
 
 MouthSmash = Recipe(ingredients=[vodka, lemonade, peachS], proportions=
                     [0.25, 0.65, 0.1], image = "MouthSmashButton.png",
-                    addMessage = "Enjoy!", volume=cup_size)
+                    volume=cup_size)
 
 # ------ Single ingredients ------
 
 RumShot = Recipe(ingredients=[rum], proportions=[1], image="RumShotButton.png",
-                 addMessage="Enjoy!", volume=shot_size)
+                 volume=shot_size)
 
 VodkaShot = Recipe(ingredients=[vodka], proportions=
                     [1], image = "VodkaShotButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 TequilaShot = Recipe(ingredients=[tequila], proportions=
                     [1], image = "TequilaShotButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 GinShot = Recipe(ingredients=[gin], proportions=
                     [1], image = "GinShotButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 PeachSShot = Recipe(ingredients=[peachS], proportions=
                     [1], image = "PeachSShotButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 TripleSShot = Recipe(ingredients=[tripleS], proportions=
                     [1], image = "TripleSShotButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 CranberryShot = Recipe(ingredients=[cranberry], proportions=
                     [1], image = "CranberryButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 PineappleShot = Recipe(ingredients=[pineapple], proportions=
                     [1], image = "PineappleButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 OrangeShot = Recipe(ingredients=[orange], proportions=
                     [1], image = "OrangeButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 CoconutShot = Recipe(ingredients=[coconut], proportions=
                     [1], image = "CoconutButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 LimeShot = Recipe(ingredients=[lime], proportions=
                     [1], image = "LimeButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 LemonadeShot = Recipe(ingredients=[lemonade], proportions=
                     [1], image = "LemonadeButton.png",
-                    addMessage = "Enjoy!", volume=shot_size)
+                    volume=shot_size)
 
 recipeList = [DarkAndStormy, Margarita, Cosmopolitan, RumPunch, MoscowMule,
               TequilaSunrise, VodkaCranberry, SexOnTheBeach, Mojito, PinaColada,
