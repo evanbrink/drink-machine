@@ -48,70 +48,73 @@ calib = [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12]
 
 # -----------------SERIAL FUNCITONS-----------------------
 # open serial port
-#ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
+#ser = serial.Serial('/dev/cu.usbmodem14201', 9600)  # Mac
 ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
 
 
 def ping():
     ser.write(b'\xff\x03\x01\x04\x00')
 
-def pour(pump, time):
+def pour(pump, time1):
     header = b'\xff'
     length = b'\x06'
     instr  = b'\x02'
     pnum   = bytes([pump])
-    ptimeL = bytes([time%256])
-    ptimeH = bytes([int(time/256)])
-    CRC =  ((6+2+pump+time%256+int(time/256))%65536
+    ptimeL = bytes([time1%256])
+    ptimeH = bytes([int(time1/256)])
+    CRC =  ((6+2+pump+time1%256+int(time1/256))%65536
             ).to_bytes(2,byteorder='little')
 
     packet = header+length+instr+pnum+ptimeL+ptimeH+CRC
     ser.write(packet)
+    time.sleep(time1/1000.0)
 
-def pour2(pump, time, pump2, time2):
+def pour2(pump, time1, pump2, time2):
     header = b'\xff'
     length = b'\x09'
     instr  = b'\x02'
     pnum1  = bytes([pump])
-    time1L = bytes([time%256])
-    time1H = bytes([int(time/256)])
+    time1L = bytes([time1%256])
+    time1H = bytes([int(time1/256)])
     pnum2  = bytes([pump2])
     time2L = bytes([time2%256])
     time2H = bytes([int(time2/256)])
-    CRC =  ((9+2+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)
+    CRC =  ((9+2+pump+time1%256+int(time1/256)+pump2+time2%256+int(time2/256)
             )%65536).to_bytes(2,byteorder='little')
 
     packet = header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+CRC
     ser.write(packet)
+    time.sleep(max([time1, time2])/1000.0)
 
-def pour3(pump, time, pump2, time2, pump3, time3):
+def pour3(pump, time1, pump2, time2, pump3, time3):
     header = b'\xff'
     length = b'\x0c'
     instr  = b'\x02'
     pnum1  = bytes([pump])
-    time1L = bytes([time%256])
-    time1H = bytes([int(time/256)])
+    time1L = bytes([time1%256])
+    time1H = bytes([int(time1/256)])
     pnum2  = bytes([pump2])
     time2L = bytes([time2%256])
     time2H = bytes([int(time2/256)])
     pnum3  = bytes([pump3])
     time3L = bytes([time3%256])
     time3H = bytes([int(time3/256)])
-    CRC =  ((12+2+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
+    CRC =  ((12+2+pump+time1%256+int(time1/256)+pump2+time2%256+int(time2/256)+
             pump3+time3%256+int(time3/256))%65536).to_bytes(2,byteorder='little')
 
     packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
     + time3L+time3H+CRC)
     ser.write(packet)
+    time.sleep(max([time1, time2, time3])/1000.0)
 
 
-def pour4(pump, time, pump2, time2, pump3, time3, pump4, time4):
+def pour4(pump, time1, pump2, time2, pump3, time3, pump4, time4):
     header = b'\xff'
     length = b'\x0f'
     instr  = b'\x02'
     pnum1  = bytes([pump])
-    time1L = bytes([time%256])
-    time1H = bytes([int(time/256)])
+    time1L = bytes([time1%256])
+    time1H = bytes([int(time1/256)])
     pnum2  = bytes([pump2])
     time2L = bytes([time2%256])
     time2H = bytes([int(time2/256)])
@@ -121,21 +124,22 @@ def pour4(pump, time, pump2, time2, pump3, time3, pump4, time4):
     pnum4  = bytes([pump4])
     time4L = bytes([time4%256])
     time4H = bytes([int(time4/256)])
-    CRC =  ((15+2+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
+    CRC =  ((15+2+pump+time1%256+int(time1/256)+pump2+time2%256+int(time2/256)+
             pump3+time3%256+int(time3/256)+pump4+time4%256+int(time4/256)
              )%65536).to_bytes(2,byteorder='little')
 
     packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
     + time3L+time3H+pnum4+time4L+time4H+CRC)
     ser.write(packet)
+    time.sleep(max([time1, time2, time3, time4])/1000.0)
 
-def pour5(pump, time, pump2, time2, pump3, time3, pump4, time4, pump5, time5):
+def pour5(pump, time1, pump2, time2, pump3, time3, pump4, time4, pump5, time5):
     header = b'\xff'
     length = b'\x12'
     instr  = b'\x02'
     pnum1  = bytes([pump])
-    time1L = bytes([time%256])
-    time1H = bytes([int(time/256)])
+    time1L = bytes([time1%256])
+    time1H = bytes([int(time1/256)])
     pnum2  = bytes([pump2])
     time2L = bytes([time2%256])
     time2H = bytes([int(time2/256)])
@@ -148,22 +152,23 @@ def pour5(pump, time, pump2, time2, pump3, time3, pump4, time4, pump5, time5):
     pnum5  = bytes([pump5])
     time5L = bytes([time5%256])
     time5H = bytes([int(time5/256)])
-    CRC =  ((18+2+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
+    CRC =  ((18+2+pump+time1%256+int(time1/256)+pump2+time2%256+int(time2/256)+
             pump3+time3%256+int(time3/256)+pump4+time4%256+int(time4/256)+pump5+
             time5%256+int(time5/256))%65536).to_bytes(2,byteorder='little')
 
     packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
     + time3L+time3H+pnum4+time4L+time4H+pnum5+time5L+time5H+CRC)
     ser.write(packet)
+    time.sleep(max([time1, time2, time3, time4, time5])/1000.0)
 
-def pour6(pump, time, pump2, time2, pump3, time3, pump4, time4, pump5, time5,
+def pour6(pump, time1, pump2, time2, pump3, time3, pump4, time4, pump5, time5,
           pump6, time6):
     header = b'\xff'
     length = b'\x15'
     instr  = b'\x02'
     pnum1  = bytes([pump])
-    time1L = bytes([time%256])
-    time1H = bytes([int(time/256)])
+    time1L = bytes([time1%256])
+    time1H = bytes([int(time1/256)])
     pnum2  = bytes([pump2])
     time2L = bytes([time2%256])
     time2H = bytes([int(time2/256)])
@@ -179,7 +184,7 @@ def pour6(pump, time, pump2, time2, pump3, time3, pump4, time4, pump5, time5,
     pnum6  = bytes([pump5])
     time6L = bytes([time5%256])
     time6H = bytes([int(time5/256)])
-    CRC =  ((21+2+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
+    CRC =  ((21+2+pump+time1%256+int(time1/256)+pump2+time2%256+int(time2/256)+
             pump3+time3%256+int(time3/256)+pump4+time4%256+int(time4/256)+pump5+
             time5%256+int(time5/256)+pump6+time6%256+int(time6/256))%
             65536).to_bytes(2,byteorder='little')
@@ -187,64 +192,68 @@ def pour6(pump, time, pump2, time2, pump3, time3, pump4, time4, pump5, time5,
     packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
     + time3L+time3H+pnum4+time4L+time4H+pnum5+time5L+time5H+pnum6+time6L+time6H+CRC)
     ser.write(packet)
+    time.sleep(max([time1, time2, time3, time4, time5, time6])/1000.0)
 
-def back(pump, time):
+def back(pump, time1):
     header = b'\xff'
     length = b'\x06'
     instr  = b'\x04'
     pnum   = bytes([pump])
-    ptimeL = bytes([time%256])
-    ptimeH = bytes([int(time/256)])
-    CRC =  ((6+4+pump+time%256+int(time/256))%65536
+    ptimeL = bytes([time1%256])
+    ptimeH = bytes([int(time1/256)])
+    CRC =  ((6+4+pump+time1%256+int(time1/256))%65536
             ).to_bytes(2,byteorder='little')
 
     packet = header+length+instr+pnum+ptimeL+ptimeH+CRC
     ser.write(packet)
+    time.sleep(time1/1000.0)
 
-def back2(pump, time, pump2, time2):
+def back2(pump, time1, pump2, time2):
     header = b'\xff'
     length = b'\x09'
     instr  = b'\x04'
     pnum1  = bytes([pump])
-    time1L = bytes([time%256])
-    time1H = bytes([int(time/256)])
+    time1L = bytes([time1%256])
+    time1H = bytes([int(time1/256)])
     pnum2  = bytes([pump2])
     time2L = bytes([time2%256])
     time2H = bytes([int(time2/256)])
-    CRC =  ((9+4+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)
+    CRC =  ((9+4+pump+time1%256+int(time1/256)+pump2+time2%256+int(time2/256)
             )%65536).to_bytes(2,byteorder='little')
 
     packet = header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+CRC
     ser.write(packet)
+    time.sleep(max([time1, time2])/1000.0)
 
-def back3(pump, time, pump2, time2, pump3, time3):
+def back3(pump, time1, pump2, time2, pump3, time3):
     header = b'\xff'
     length = b'\x0c'
     instr  = b'\x04'
     pnum1  = bytes([pump])
-    time1L = bytes([time%256])
-    time1H = bytes([int(time/256)])
+    time1L = bytes([time1%256])
+    time1H = bytes([int(time1/256)])
     pnum2  = bytes([pump2])
     time2L = bytes([time2%256])
     time2H = bytes([int(time2/256)])
     pnum3  = bytes([pump3])
     time3L = bytes([time3%256])
     time3H = bytes([int(time3/256)])
-    CRC =  ((12+4+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
+    CRC =  ((12+4+pump+time1%256+int(time1/256)+pump2+time2%256+int(time2/256)+
             pump3+time3%256+int(time3/256))%65536).to_bytes(2,byteorder='little')
 
     packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
     + time3L+time3H+CRC)
     ser.write(packet)
+    time.sleep(max([time1, time2, time3])/1000.0)
 
 
-def back4(pump, time, pump2, time2, pump3, time3, pump4, time4):
+def back4(pump, time1, pump2, time2, pump3, time3, pump4, time4):
     header = b'\xff'
     length = b'\x0f'
     instr  = b'\x04'
     pnum1  = bytes([pump])
-    time1L = bytes([time%256])
-    time1H = bytes([int(time/256)])
+    time1L = bytes([time1%256])
+    time1H = bytes([int(time1/256)])
     pnum2  = bytes([pump2])
     time2L = bytes([time2%256])
     time2H = bytes([int(time2/256)])
@@ -254,18 +263,82 @@ def back4(pump, time, pump2, time2, pump3, time3, pump4, time4):
     pnum4  = bytes([pump4])
     time4L = bytes([time4%256])
     time4H = bytes([int(time4/256)])
-    CRC =  ((15+4+pump+time%256+int(time/256)+pump2+time2%256+int(time2/256)+
+    CRC =  ((15+4+pump+time1%256+int(time1/256)+pump2+time2%256+int(time2/256)+
             pump3+time3%256+int(time3/256)+pump4+time4%256+int(time4/256)
              )%65536).to_bytes(2,byteorder='little')
 
     packet = (header+length+instr+pnum1+time1L+time1H+pnum2+time2L+time2H+pnum3
     + time3L+time3H+pnum4+time4L+time4H+CRC)
     ser.write(packet)
-    print("sent:")
-    print(packet)
+    time.sleep(max([time1, time2, time3, time4])/1000.0)
+
+#  -------------------GUI SETUP---------------------------
+app = App(title="MouthSmash", width=window_width,
+         height=window_height, layout="grid", bg="white")
+
+#  Pages
+page_one = Box(app, grid=[0, 0], align="top", layout="grid")
+page_one_text = Text(page_one, grid = [0,0], align = "top", text = "PAGE ONE")
+page_two = Box(app, grid=[0,0], align="top", layout="grid",
+               enabled=False, visible=False)
+page_two_text = Text(page_two, grid = [0,0], align = "top", text = "PAGE TWO")
+page_three = Box(app, grid=[0,0], align="top", layout="grid",
+               enabled=False, visible=False)
+page_two_three = Text(page_three, grid=[0, 0], align="top", text="PAGE THREE")
+loading_page = Box(app, grid=[0,0], align="top", layout="grid",
+               enabled=False, visible=False)
+loading_page_text = Text(loading_page, grid = [0,0], align = "top",
+                         text = "LOADING SCREEN")
+loading_image = Picture(loading_page, grid = [0,1], align = "top", image = "MouthSmash.jpg")
+# Button Box
+button_box = Box(app, grid = [0,1], align = "top", layout = "grid")
 
 
-## ---------------CUSTOM OBJECTS-------------------------
+# Navigation functions
+def clear_screen():
+    page_one.hide()
+    page_one.disable()
+    page_two.hide()
+    page_two.disable()
+    page_three.hide()
+    page_three.disable()
+    button_box.hide()
+    button_box.disable()
+    loading_page.hide()
+    loading_page.disable()
+
+
+def go_to_page(page):
+    clear_screen()
+    if page == 1:
+        page_one.show()
+        page_one.enable()
+        button_box.enable()
+        button_box.show()
+    if page == 2:
+        page_two.show()
+        page_two.enable()
+        button_box.enable()
+        button_box.show()
+    if page == 3:
+        page_three.show()
+        page_three.enable()
+        button_box.enable()
+        button_box.show()
+    if page == 0:
+        loading_page.show()
+        loading_page.enable()
+    app.update()
+
+# Button Box Setup
+button_one = PushButton(button_box, command = go_to_page, args = [1],
+                        text = "1", grid = [0,0])
+button_two = PushButton(button_box, command = go_to_page, args = [2],
+                        text = "2", grid = [1,0])
+button_three = PushButton(button_box, command = go_to_page, args = [3],
+                        text = "3", grid = [2,0])
+
+## --------------- RECIPE SETUP -------------------------
 class Recipe:
     def __init__(self, ingredients, proportions, image, addMessage, volume):
         self.ing = ingredients
@@ -276,6 +349,7 @@ class Recipe:
 
     # define instructions
     def cmd(self):
+        go_to_page(0)
         if len(self.ing) == 1:
             pour(self.ing[0], int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]))
         if len(self.ing) == 2:
@@ -303,6 +377,10 @@ class Recipe:
             self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
             self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]),
             self.ing[5], int(self.vol*self.prop[5]*pump_speed*calib[self.ing[5]-1]))
+        go_to_page(1)
+        app.update()
+        info(title="Finished!", text=self.message)
+
 
     # call this function to see if all the ingredients are available
     def available(self):
@@ -346,7 +424,7 @@ MoscowMule = Recipe(ingredients = [vodka, gingerB, lime],
 TequilaSunrise = Recipe(ingredients = [tequila, orange],
                         proportions = [0.33, 0.67], image =
                         "TequilaSunriseButton.png", addMessage =
-                        "Add 2 pumps Grenadine", volume=cup_size)
+                        "Suggested: Add 2 pumps Grenadine", volume=cup_size)
 
 VodkaCranberry = Recipe(ingredients = [vodka, cranberry, lime],
                         proportions = [0.15, 0.77, 0.08], image =
@@ -358,11 +436,11 @@ SexOnTheBeach = Recipe(ingredients = [vodka, peachS, orange, cranberry],
 
 Mojito = Recipe(ingredients = [rum, lime, clubS], proportions =
                 [0.23, 0.15, 0.62], image = "MojitoButton.png", addMessage =
-                "Add 2 pumps simple syrup + 2 pumps mint syrup", volume=cup_size)
+                "Suggested: Add 2 pumps simple syrup + 2 pumps mint syrup", volume=cup_size)
 
 PinaColada = Recipe(ingredients=[rum, coconut, pineapple], proportions =
                     [0.2, 0.4, 0.4], image = "PinaColadaButton.png", addMessage=
-                    "Add 2 pumps simple syrup", volume=cup_size)
+                    "Suggested: Add 2 pumps simple syrup", volume=cup_size)
 
 RumAndCoke = Recipe(ingredients=[rum, coke, lime], proportions=[0.28, 0.69, 0.03],
                     image="RumAndCokeButton.png", addMessage="Enjoy!", volume=cup_size)
@@ -374,6 +452,8 @@ VodkaTonic = Recipe(ingredients=[vodka, tonic, lime], proportions=
 MouthSmash = Recipe(ingredients=[vodka, lemonade, peachS], proportions=
                     [0.25, 0.65, 0.1], image = "MouthSmashButton.png",
                     addMessage = "Enjoy!", volume=cup_size)
+
+# ------ Single ingredients ------
 
 RumShot = Recipe(ingredients=[rum], proportions=[1], image="RumShotButton.png",
                  addMessage="Enjoy!", volume=shot_size)
@@ -428,72 +508,8 @@ recipeList = [DarkAndStormy, Margarita, Cosmopolitan, RumPunch, MoscowMule,
               TequilaShot, GinShot, PeachSShot, TripleSShot, CranberryShot,
               PineappleShot, OrangeShot, CoconutShot, LimeShot, LemonadeShot]
 
-#  -------------------GUI SETUP---------------------------
-app = App(title="MouthSmash", width=window_width,
-         height=window_height, layout="grid")
 
-#  Pages
-page_one = Box(app, grid=[0, 0], align="top", layout="grid")
-page_one_text = Text(page_one, grid = [0,0], align = "top", text = "PAGE ONE")
-page_two = Box(app, grid=[0,0], align="top", layout="grid",
-               enabled=False, visible=False)
-page_two_text = Text(page_two, grid = [0,0], align = "top", text = "PAGE TWO")
-page_three = Box(app, grid=[0,0], align="top", layout="grid",
-               enabled=False, visible=False)
-page_two_three = Text(page_three, grid=[0, 0], align="top", text="PAGE THREE")
-loading_page = Box(app, grid=[0,0], align="top", layout="grid",
-               enabled=False, visible=False)
-loading_page_text = Text(loading_page, grid = [0,0], align = "top",
-                         text = "LOADING SCREEN")
-# Button Box
-button_box = Box(app, grid = [0,1], align = "top", layout = "grid")
-
-
-# Navigation functions
-def clear_screen():
-    page_one.hide()
-    page_one.disable()
-    page_two.hide()
-    page_two.disable()
-    page_three.hide()
-    page_three.disable()
-    button_box.hide()
-    button_box.disable()
-    loading_page.hide()
-    loading_page.disable()
-
-
-def go_to_page(page):
-    clear_screen()
-    if page == 1:
-        page_one.show()
-        page_one.enable()
-        button_box.enable()
-        button_box.show()
-    if page == 2:
-        page_two.show()
-        page_two.enable()
-        button_box.enable()
-        button_box.show()
-    if page == 3:
-        page_three.show()
-        page_three.enable()
-        button_box.enable()
-        button_box.show()
-    if page == 0:
-        loading_page.show()
-        loading_page.enable()
-
-
-# Button Box Setup
-button_one = PushButton(button_box, command = go_to_page, args = [1],
-                        text = "1", grid = [0,0])
-button_two = PushButton(button_box, command = go_to_page, args = [2],
-                        text = "2", grid = [1,0])
-button_three = PushButton(button_box, command = go_to_page, args = [3],
-                        text = "3", grid = [2,0])
-
-
+# -------------------- POPULATE DRINK BUTTONS ------------------------
 x = 0
 y = 0
 pg = 1
