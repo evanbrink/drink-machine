@@ -25,7 +25,7 @@ pr12 = 6000
 
 # -----------------SERIAL FUNCITONS-----------------------
 # open serial port
-#ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
+#ser = serial.Serial('/dev/cu.usbmodem14201', 9600)  # Mac
 ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
 
 

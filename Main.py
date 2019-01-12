@@ -3,22 +3,27 @@ import serial
 import time
 
 #  ---------------LOAD IN SETTINGS-------------------
+# set each ingredient equal to its pump.  If you don't
+# have the ingredient stocked, set it equal to zero.
+# If you have a carbonated ingredient that can't be pumped,
+# set it equal to 13
 rum         = 1
 vodka       = 2
 tequila     = 3
-gin         = 0
+gin         = 11
 peachS      = 9
 tripleS     = 5
 cranberry   = 6
 pineapple   = 7
 orange      = 8
-coconut     = 0
-gingerB     = 0
-clubS       = 0
+coconut     = 12
+gingerB     = 13
+clubS       = 13
 lime        = 4
 tonic       = 0
-coke        = 0
+coke        = 13
 lemonade    = 0
+sweetSour   = 10
 
 #  ---------------GLOBAL VARIALBES-------------------
 window_height = 700
@@ -44,7 +49,7 @@ cc9 = 1
 cc10 = 1
 cc11 = 1
 cc12 = 1
-calib = [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12]
+calib = [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12, 0]
 
 # -----------------SERIAL FUNCITONS-----------------------
 # open serial port
@@ -193,6 +198,11 @@ def pour6(pump, time1, pump2, time2, pump3, time3, pump4, time4, pump5, time5,
     + time3L+time3H+pnum4+time4L+time4H+pnum5+time5L+time5H+pnum6+time6L+time6H+CRC)
     ser.write(packet)
     time.sleep(max([time1, time2, time3, time4, time5, time6])/1000.0)
+
+def pour7(pump1, time1, pump2, time2, pump3, time3, pump4, time4, pump5, time5,
+          pump6, time6, pump7, time7):
+    pour4(pump1, time1, pump2, time2, pump3, time3, pump4, time4)
+    pour3(pump5, time5, pump6, time6, pump7, time7)
 
 def back(pump, time1):
     header = b'\xff'
@@ -380,6 +390,14 @@ class Recipe:
             self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
             self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]),
             self.ing[5], int(self.vol*self.prop[5]*pump_speed*calib[self.ing[5]-1]))
+        if len(self.ing) == 7:
+            pour7(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
+            self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
+            self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
+            self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]),
+            self.ing[5], int(self.vol*self.prop[5]*pump_speed*calib[self.ing[5]-1]),
+            self.ing[6], int(self.vol*self.prop[6]*pump_speed*calib[self.ing[6]-1]))
         go_to_page(1)
         app.update()
         info(title="Finished!", text=self.endMessage)
@@ -460,6 +478,11 @@ MouthSmash = Recipe(ingredients=[vodka, lemonade, peachS], proportions=
                     [0.25, 0.65, 0.1], image = "MouthSmashButton.png",
                     volume=cup_size)
 
+LongIsland = Recipe(ingredients=[vodka, rum, gin, tequila, tripleS, sweetSour, coke],
+                    proportions=[0.11, 0.11, 0.11, 0.11, 0.11, 0.22, 0.22],
+                    image = "LongIslandButton.png", volume=cup_size,
+                    endMessage="Top off with Coke")
+
 # ------ Single ingredients ------
 
 RumShot = Recipe(ingredients=[rum], proportions=[1], image="RumShotButton.png",
@@ -511,7 +534,7 @@ LemonadeShot = Recipe(ingredients=[lemonade], proportions=
 
 recipeList = [DarkAndStormy, Margarita, Cosmopolitan, RumPunch, MoscowMule,
               TequilaSunrise, VodkaCranberry, SexOnTheBeach, Mojito, PinaColada,
-              RumAndCoke, VodkaTonic, MouthSmash, RumShot, VodkaShot,
+              RumAndCoke, VodkaTonic, MouthSmash, LongIsland, RumShot, VodkaShot,
               TequilaShot, GinShot, PeachSShot, TripleSShot, CranberryShot,
               PineappleShot, OrangeShot, CoconutShot, LimeShot, LemonadeShot]
 
