@@ -53,7 +53,7 @@ calib = [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12, 0]
 
 # -----------------SERIAL FUNCITONS-----------------------
 # open serial port
-#ser = serial.Serial('/dev/cu.usbmodem14201', 9600)  # Mac
+#ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
 ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
 
 
@@ -283,7 +283,7 @@ def back4(pump, time1, pump2, time2, pump3, time3, pump4, time4):
     time.sleep(max([time1, time2, time3, time4])/1000.0)
 
 #  -------------------GUI SETUP---------------------------
-app = App(title="MouthSmash", width=window_width,
+app = App(title="Welcome to Drinkatory", width=window_width,
          height=window_height, layout="grid", bg="white")
 
 #  Pages
@@ -297,9 +297,9 @@ page_three = Box(app, grid=[0,0], align="top", layout="grid",
 page_two_three = Text(page_three, grid=[0, 0], align="top", text="PAGE THREE")
 loading_page = Box(app, grid=[0,0], align="top", layout="grid",
                enabled=False, visible=False)
-loading_page_text = Text(loading_page, grid = [0,0], align = "top",
-                         text = "LOADING SCREEN")
-loading_image = Picture(loading_page, grid = [0,1], align = "top", image = "MouthSmash.jpg")
+#loading_page_text = Text(loading_page, grid = [0,0], align = "top",
+#                         text = "LOADING SCREEN")
+loading_image = Picture(loading_page, grid = [0,1], align = "top", image = "LoadingScreen.png")
 # Button Box
 button_box = Box(app, grid = [0,1], align = "top", layout = "grid")
 
