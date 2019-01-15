@@ -10,17 +10,17 @@ import time
 rum         = 1
 vodka       = 2
 tequila     = 3
-gin         = 11
+gin         = 12
 peachS      = 9
 tripleS     = 5
 cranberry   = 6
 pineapple   = 7
 orange      = 8
-coconut     = 12
+coconut     = 0
 gingerB     = 13
 clubS       = 13
 lime        = 4
-tonic       = 0
+tonic       = 13
 coke        = 13
 lemonade    = 0
 sweetSour   = 10
@@ -30,7 +30,7 @@ window_height = 700
 window_width = 1000
 image_size = 250
 
-cup_size = 8     # in fl oz
+cup_size = 5     # in fl oz
 shot_size = 1.5  # in fl oz
 
 # nominal pump speed
