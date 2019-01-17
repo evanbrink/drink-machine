@@ -31,7 +31,7 @@ window_height = 700
 window_width = 1000
 image_size = 250
 
-cup_size = 5     # in fl oz
+cup_size = 4     # in fl oz
 shot_size = 1.5  # in fl oz
 
 # nominal pump speed
@@ -54,9 +54,16 @@ calib = [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12, 0]
 
 # -----------------SERIAL FUNCITONS-----------------------
 # open serial port
-#ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
-ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
-
+try:
+    ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
+except:
+    try:
+        ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
+    except:
+        try:
+            ser = serial.Serial('/dev/cu.usbmodem14401', 9600)  # Mac
+        except:
+            ser = serial.Serial('/dev/cu.usbmodem14201', 9600)  # Mac
 
 def ping():
     ser.write(b'\xff\x03\x01\x04\x00')
@@ -343,65 +350,67 @@ def go_to_page(page):
 
 # Button Box Setup
 button_one = PushButton(button_box, command = go_to_page, args = [1],
-                        text = "1", grid = [0,0])
+                        text = "Page 1", grid = [0,0])
 button_two = PushButton(button_box, command = go_to_page, args = [2],
-                        text = "2", grid = [1,0])
+                        text = "Page 2", grid = [1,0])
 button_three = PushButton(button_box, command = go_to_page, args = [3],
-                        text = "3", grid = [2,0])
+                        text = "Page 3", grid = [2,0])
 
 ## --------------- RECIPE SETUP -------------------------
 class Recipe:
-    def __init__(self, ingredients, proportions, image, volume,
-                 startMessage = None, endMessage = None):
+    def __init__(self, ingredients, proportions, image, volume, name,
+                 endMessage = None):
         self.ing = ingredients
         self.prop = proportions
         self.image = image
-        self.startMessage = startMessage if startMessage is not None else "Place cup below"
+        self.name = name
         self.endMessage = endMessage if endMessage is not None else "Enjoy!"
         self.vol = volume
 
     # define instructions
     def cmd(self):
-        info(title="Hit OK when ready", text=self.startMessage)
-        go_to_page(0)
-        if len(self.ing) == 1:
-            pour(self.ing[0], int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]))
-        if len(self.ing) == 2:
-            pour2(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
-            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]))
-        if len(self.ing) == 3:
-            pour3(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
-            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
-            self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]))
-        if len(self.ing) == 4:
-            pour4(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
-            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
-            self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
-            self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]))
-        if len(self.ing) == 5:
-            pour5(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
-            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
-            self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
-            self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
-            self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]))
-        if len(self.ing) == 6:
-            pour6(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
-            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
-            self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
-            self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
-            self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]),
-            self.ing[5], int(self.vol*self.prop[5]*pump_speed*calib[self.ing[5]-1]))
-        if len(self.ing) == 7:
-            pour7(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
-            self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
-            self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
-            self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
-            self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]),
-            self.ing[5], int(self.vol*self.prop[5]*pump_speed*calib[self.ing[5]-1]),
-            self.ing[6], int(self.vol*self.prop[6]*pump_speed*calib[self.ing[6]-1]))
-        go_to_page(1)
-        app.update()
-        info(title="Finished!", text=self.endMessage)
+        #info(title="Hit OK when ready", text=self.startMessage)
+        ready = yesno("Ready?", self.name + "\nAre you sure?")
+        if ready == True:
+            go_to_page(0)
+            if len(self.ing) == 1:
+                pour(self.ing[0], int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]))
+            if len(self.ing) == 2:
+                pour2(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+                self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]))
+            if len(self.ing) == 3:
+                pour3(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+                self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
+                self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]))
+            if len(self.ing) == 4:
+                pour4(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+                self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
+                self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
+                self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]))
+            if len(self.ing) == 5:
+                pour5(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+                self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
+                self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
+                self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
+                self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]))
+            if len(self.ing) == 6:
+                pour6(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+                self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
+                self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
+                self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
+                self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]),
+                self.ing[5], int(self.vol*self.prop[5]*pump_speed*calib[self.ing[5]-1]))
+            if len(self.ing) == 7:
+                pour7(self.ing[0],int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]),
+                self.ing[1], int(self.vol*self.prop[1]*pump_speed*calib[self.ing[1]-1]),
+                self.ing[2], int(self.vol*self.prop[2]*pump_speed*calib[self.ing[2]-1]),
+                self.ing[3], int(self.vol*self.prop[3]*pump_speed*calib[self.ing[3]-1]),
+                self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]),
+                self.ing[5], int(self.vol*self.prop[5]*pump_speed*calib[self.ing[5]-1]),
+                self.ing[6], int(self.vol*self.prop[6]*pump_speed*calib[self.ing[6]-1]))
+            go_to_page(1)
+            app.update()
+            info(title="Finished!", text=self.endMessage)
 
 
     # call this function to see if all the ingredients are available
@@ -424,120 +433,126 @@ class DrinkButton:
 DarkAndStormy = Recipe(ingredients = [rum, gingerB, lime],
                        proportions = [0.36,0.55,0.09], image =
                        "DarkAndStormyButton.png", endMessage =
-                       "Top off with Ginger Beer\nSuggested: Add a dash of Bitters", volume=cup_size)
+                       "Top off with Ginger Beer\nSuggested: Add a dash of Bitters",
+                       name="Dark and Stormy", volume=cup_size)
 
 Margarita = Recipe(ingredients = [tequila, lime, tripleS],
                    proportions = [0.57, 0.29, 0.14], image =
-                   "MargaritaButton.png", startMessage =
-                   "Suggested: Add 1 pump Simple Syrup", volume=cup_size)
+                   "MargaritaButton.png", endMessage =
+                   "Suggested: Add 1 pump Simple Syrup", name="Margarita",
+                   volume=cup_size)
 
 Cosmopolitan = Recipe(ingredients = [vodka, lime, tripleS, cranberry],
                       proportions = [0.60, 0.11, 0.13, 0.16], image =
-                      "CosmopolitanButton.png", volume=2.5)
+                      "CosmopolitanButton.png", name="Cosmopolitan", volume=2.5)
 
 RumPunch = Recipe(ingredients = [rum, orange, pineapple, cranberry, lime],
                   proportions = [0.29, 0.22, 0.22, 0.22, 0.05], image =
-                  "RumPunchButton.png", startMessage =
+                  "RumPunchButton.png", name="Rum Punch", endMessage =
                   "Suggested: Add 1 pump Grenadine", volume=cup_size)
 
 MoscowMule = Recipe(ingredients = [vodka, gingerB, lime],
                     proportions = [0.24, 0.71, 0.06], image =
-                    "MoscowMuleButton.png", volume=cup_size,
+                    "MoscowMuleButton.png", volume=cup_size, name="Moscow Mule",
                     endMessage="Top off with Ginger Beer")
 
-TequilaSunrise = Recipe(ingredients = [tequila, orange],
-                        proportions = [0.33, 0.67], image =
-                        "TequilaSunriseButton.png", startMessage =
-                        "Suggested: Add 1 pump Grenadine", volume=cup_size)
+TequilaSunrise = Recipe(ingredients=[tequila, orange], proportions=[0.33, 0.67],
+                        image="TequilaSunriseButton.png", name="Tequila Sunrise",
+                        endMessage="Suggested: Add 1 pump Grenadine", volume=cup_size)
 
 VodkaCranberry = Recipe(ingredients = [vodka, cranberry, lime],
                         proportions = [0.19, 0.77, 0.04], image =
-                        "VodkaCranberryButton.png", volume=cup_size)
+                        "VodkaCranberryButton.png", name="Vodka Cranberry",
+                        volume=cup_size)
 
 SexOnTheBeach = Recipe(ingredients = [vodka, peachS, orange, cranberry],
                        proportions = [0.13, 0.13, 0.37, 0.37], image =
-                       "SexOnTheBeachButton.png", volume=cup_size)
+                       "SexOnTheBeachButton.png", volume=cup_size,
+                       name="Sex on the Beach")
 
 Mojito = Recipe(ingredients = [rum, lime, clubS], proportions =
-                [0.23, 0.15, 0.62], image = "MojitoButton.png", startMessage =
-                "Suggested: Add 2 pumps simple syrup + 2 pumps mint syrup",
-                endMessage="Top off with club soda", volume=cup_size)
+                [0.23, 0.15, 0.62], image = "MojitoButton.png", endMessage =
+                "Suggested: Add 2 pumps simple syrup + 2 pumps mint syrup" +
+                "\nTop off with club soda", name="Mojito", volume=cup_size)
 
 PinaColada = Recipe(ingredients=[rum, coconut, pineapple], proportions =
                     [0.2, 0.4, 0.4], image = "PinaColadaButton.png", endMessage=
-                    "Suggested: Add 2 pumps simple syrup", volume=cup_size)
+                    "Suggested: Add 2 pumps simple syrup", volume=cup_size,
+                    name="Pina Colada")
 
 RumAndCoke = Recipe(ingredients=[rum, coke, lime], proportions=[0.28, 0.69, 0.03],
-                    image="RumAndCokeButton.png",
-                    endMessage="Top off with Coke", volume=cup_size)
+                    image="RumAndCokeButton.png", endMessage="Top off with Coke",
+                    volume=cup_size, name="Rum and Coke")
 
 VodkaTonic = Recipe(ingredients=[vodka, tonic, lime], proportions=
                     [0.31, 0.62, 0.08], image = "VodkaTonicButton.png",
-                    endMessage="Top off with Tonic Water", volume=cup_size)
+                    endMessage="Top off with Tonic Water", volume=cup_size,
+                    name="Vodka tonic")
 
 MouthSmash = Recipe(ingredients=[vodka, lemonade, peachS], proportions=
                     [0.25, 0.65, 0.1], image = "MouthSmashButton.png",
-                    volume=cup_size)
+                    volume=cup_size, name="MOUTH SMASH")
 
 LongIsland = Recipe(ingredients=[vodka, rum, gin, tequila, tripleS, sweetSour, coke],
                     proportions=[0.10, 0.10, 0.10, 0.10, 0.10, 0.27, 0.22],
                     image = "LongIslandButton.png", volume=cup_size,
-                    endMessage="Top off with Coke")
+                    endMessage="Top off with Coke", name="Long Island Iced Tea")
 
 # ------ Single ingredients ------
 
 RumShot = Recipe(ingredients=[rum], proportions=[1], image="RumShotButton.png",
-                 volume=shot_size)
+                 volume=shot_size, name="Rum")
 
 VodkaShot = Recipe(ingredients=[vodka], proportions=
                     [1], image = "VodkaShotButton.png",
-                    volume=shot_size)
+                    volume=shot_size, name="Vodka")
 
 TequilaShot = Recipe(ingredients=[tequila], proportions=
                     [1], image = "TequilaShotButton.png",
-                    volume=shot_size)
+                    volume=shot_size, name="Tequila")
 
 GinShot = Recipe(ingredients=[gin], proportions=
                     [1], image = "GinShotButton.png",
-                    volume=shot_size)
+                    volume=shot_size, name="Gin")
 
 PeachSShot = Recipe(ingredients=[peachS], proportions=
                     [1], image = "PeachSShotButton.png",
-                    volume=shot_size)
+                    volume=shot_size, name="Peach Schnapps")
 
 TripleSShot = Recipe(ingredients=[tripleS], proportions=
                     [1], image = "TripleSShotButton.png",
-                    volume=shot_size)
+                    volume=shot_size, name="Triple Sec")
 
 CranberryShot = Recipe(ingredients=[cranberry], proportions=
                     [1], image = "CranberryButton.png",
-                    volume=shot_size)
+                    volume=shot_size, name="Cranberry Juice")
 
 PineappleShot = Recipe(ingredients=[pineapple], proportions=
                     [1], image = "PineappleButton.png",
-                    volume=shot_size)
+                    volume=shot_size, name="Pineapple Juice")
 
 OrangeShot = Recipe(ingredients=[orange], proportions=
                     [1], image = "OrangeButton.png",
-                    volume=shot_size)
+                    volume=shot_size, name="Orange Juice")
 
 CoconutShot = Recipe(ingredients=[coconut], proportions=
                     [1], image = "CoconutButton.png",
-                    volume=shot_size)
+                    volume=shot_size, name="Coconut Milk")
 
 LimeShot = Recipe(ingredients=[lime], proportions=
                     [1], image = "LimeButton.png",
-                    volume=shot_size)
+                    volume=shot_size*.5, name="Lime Juice")
 
 LemonadeShot = Recipe(ingredients=[lemonade], proportions=
                     [1], image = "LemonadeButton.png",
-                    volume=shot_size)
+                    volume=shot_size, name="Lemonade")
 
-recipeList = [DarkAndStormy, Margarita, Cosmopolitan, RumPunch, MoscowMule,
+recipeList = [DarkAndStormy, Margarita, RumPunch, MoscowMule,
               TequilaSunrise, VodkaCranberry, SexOnTheBeach, Mojito, PinaColada,
               RumAndCoke, VodkaTonic, MouthSmash, LongIsland, RumShot, VodkaShot,
               TequilaShot, GinShot, PeachSShot, TripleSShot, CranberryShot,
               PineappleShot, OrangeShot, CoconutShot, LimeShot, LemonadeShot]
+              # COSMOPOLITAN TEMPORARILY REMOVED
 
 
 # -------------------- POPULATE DRINK BUTTONS ------------------------
