@@ -1,6 +1,7 @@
 from guizero import *
 import serial
 import time
+import datetime
 
 #  ---------------LOAD IN SETTINGS-------------------
 # set each ingredient equal to its pump.  If you don't
@@ -21,7 +22,7 @@ gin         = 12
 coconut     = 0
 gingerB     = 13
 clubS       = 13
-tonic       = 13
+tonic       = 0
 coke        = 13
 lemonade    = 0
 
@@ -119,7 +120,6 @@ def pour3(pump, time1, pump2, time2, pump3, time3):
     + time3L+time3H+CRC)
     ser.write(packet)
     time.sleep(max([time1, time2, time3])/1000.0)
-
 
 def pour4(pump, time1, pump2, time2, pump3, time3, pump4, time4):
     header = b'\xff'
@@ -366,12 +366,14 @@ class Recipe:
         self.name = name
         self.endMessage = endMessage if endMessage is not None else "Enjoy!"
         self.vol = volume
+        self.timesMade = 0
 
     # define instructions
     def cmd(self):
         #info(title="Hit OK when ready", text=self.startMessage)
         ready = yesno("Ready?", self.name + "\nAre you sure?")
         if ready == True:
+            self.timesMade += 1
             go_to_page(0)
             if len(self.ing) == 1:
                 pour(self.ing[0], int(self.vol*self.prop[0]*pump_speed*calib[self.ing[0]-1]))
@@ -408,11 +410,10 @@ class Recipe:
                 self.ing[4], int(self.vol*self.prop[4]*pump_speed*calib[self.ing[4]-1]),
                 self.ing[5], int(self.vol*self.prop[5]*pump_speed*calib[self.ing[5]-1]),
                 self.ing[6], int(self.vol*self.prop[6]*pump_speed*calib[self.ing[6]-1]))
+            info(title="Finished!", text=self.endMessage)
             go_to_page(1)
             app.update()
-            info(title="Finished!", text=self.endMessage)
-
-
+            
     # call this function to see if all the ingredients are available
     def available(self):
         avl = True
@@ -554,6 +555,17 @@ recipeList = [DarkAndStormy, Margarita, RumPunch, MoscowMule,
               PineappleShot, OrangeShot, CoconutShot, LimeShot, LemonadeShot]
               # COSMOPOLITAN TEMPORARILY REMOVED
 
+def exportStats():
+    now = datetime.datetime.now()
+    date = str(now.year)+"-"+str(now.month)+"-"+str(now.day)
+    file = open("STATS"+date+".txt", "w")
+    file.write("Statistics for "+date+". Exported at " +str(now.hour)+":"+
+                str(now.minute)+"\n")
+    for r in recipeList:
+        file.write(r.name + ": " + str(r.timesMade)+"\n")
+
+statsButton = PushButton(button_box, command = exportStats,
+                        text = "Export Stats", grid = [3,0])
 
 # -------------------- POPULATE DRINK BUTTONS ------------------------
 x = 0
