@@ -413,7 +413,7 @@ class Recipe:
             info(title="Finished!", text=self.endMessage)
             go_to_page(1)
             app.update()
-            
+
     # call this function to see if all the ingredients are available
     def available(self):
         avl = True
@@ -563,6 +563,7 @@ def exportStats():
                 str(now.minute)+"\n")
     for r in recipeList:
         file.write(r.name + ": " + str(r.timesMade)+"\n")
+    info("Finished","Stats Exported!")
 
 statsButton = PushButton(button_box, command = exportStats,
                         text = "Export Stats", grid = [3,0])
