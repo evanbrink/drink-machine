@@ -10,20 +10,21 @@ import time
 rum         = 1
 vodka       = 2
 tequila     = 3
-gin         = 12
-peachS      = 9
-tripleS     = 5
-cranberry   = 6
-pineapple   = 7
+lime        = 4
+pineapple   = 5
+peachS      = 6
+tripleS     = 7
 orange      = 8
+cranberry   = 9
+sweetSour   = 10
+gin         = 12
 coconut     = 0
 gingerB     = 13
 clubS       = 13
-lime        = 4
 tonic       = 13
 coke        = 13
 lemonade    = 0
-sweetSour   = 10
+
 
 #  ---------------GLOBAL VARIALBES-------------------
 window_height = 700
@@ -41,14 +42,14 @@ cc1 = 2.711
 cc2 = 3.017
 cc3 = 2.583
 cc4 = 2.861
-cc5 = 1.007
-cc6 = 1
-cc7 = 1
-cc8 = 1
-cc9 = 1
-cc10 = 1
-cc11 = 1
-cc12 = 1
+cc5 = 1.097
+cc6 = 1.140
+cc7 = 1.178
+cc8 = 1.114
+cc9 = 1.135
+cc10 = 1.118
+cc11 = 1.029
+cc12 = 1.145
 calib = [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, cc11, cc12, 0]
 
 # -----------------SERIAL FUNCITONS-----------------------
@@ -431,8 +432,8 @@ Margarita = Recipe(ingredients = [tequila, lime, tripleS],
                    "Suggested: Add 1 pump Simple Syrup", volume=cup_size)
 
 Cosmopolitan = Recipe(ingredients = [vodka, lime, tripleS, cranberry],
-                      proportions = [0.67, 0.11, 0.11, 0.11], image =
-                      "CosmopolitanButton.png", volume=cup_size)
+                      proportions = [0.60, 0.11, 0.13, 0.16], image =
+                      "CosmopolitanButton.png", volume=2.5)
 
 RumPunch = Recipe(ingredients = [rum, orange, pineapple, cranberry, lime],
                   proportions = [0.29, 0.22, 0.22, 0.22, 0.05], image =
@@ -447,10 +448,10 @@ MoscowMule = Recipe(ingredients = [vodka, gingerB, lime],
 TequilaSunrise = Recipe(ingredients = [tequila, orange],
                         proportions = [0.33, 0.67], image =
                         "TequilaSunriseButton.png", startMessage =
-                        "Suggested: Add 2 pumps Grenadine", volume=cup_size)
+                        "Suggested: Add 1 pump Grenadine", volume=cup_size)
 
 VodkaCranberry = Recipe(ingredients = [vodka, cranberry, lime],
-                        proportions = [0.15, 0.77, 0.08], image =
+                        proportions = [0.19, 0.77, 0.04], image =
                         "VodkaCranberryButton.png", volume=cup_size)
 
 SexOnTheBeach = Recipe(ingredients = [vodka, peachS, orange, cranberry],
@@ -479,7 +480,7 @@ MouthSmash = Recipe(ingredients=[vodka, lemonade, peachS], proportions=
                     volume=cup_size)
 
 LongIsland = Recipe(ingredients=[vodka, rum, gin, tequila, tripleS, sweetSour, coke],
-                    proportions=[0.11, 0.11, 0.11, 0.11, 0.11, 0.22, 0.22],
+                    proportions=[0.10, 0.10, 0.10, 0.10, 0.10, 0.27, 0.22],
                     image = "LongIslandButton.png", volume=cup_size,
                     endMessage="Top off with Coke")
 

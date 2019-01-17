@@ -25,7 +25,7 @@ pr12 = 6000
 
 # -----------------SERIAL FUNCITONS-----------------------
 # open serial port
-#ser = serial.Serial('/dev/cu.usbmodem14201', 9600)  # Mac
+#ser = serial.Serial('/dev/cu.usbmodem14301', 9600)  # Mac
 ser = serial.Serial('/dev/ttyACM0', 9600)  # Raspberry pi
 
 
@@ -186,6 +186,43 @@ app = App(title="Setup Tools", width=window_width,
          height=window_height, layout="grid")
 
 page_one = Box(app, grid=[0, 0], align="top", layout="grid")
+page_one_text = Text(page_one, grid = [0,0], align = "top", text = "PAGE ONE")
+page_two = Box(app, grid=[0,0], align="top", layout="grid",
+               enabled=False, visible=False)
+page_two_text = Text(page_two, grid = [0,0], align = "top", text = "PAGE TWO")
+
+button_box = Box(app, grid = [0,1], align = "top", layout = "grid")
+
+
+# Navigation functions
+def clear_screen():
+    page_one.hide()
+    page_one.disable()
+    page_two.hide()
+    page_two.disable()
+    button_box.hide()
+    button_box.disable()
+
+
+def go_to_page(page):
+    clear_screen()
+    if page == 1:
+        page_one.show()
+        page_one.enable()
+        button_box.enable()
+        button_box.show()
+    if page == 2:
+        page_two.show()
+        page_two.enable()
+        button_box.enable()
+        button_box.show()
+    app.update()
+
+# Button Box Setup
+button_one = PushButton(button_box, command = go_to_page, args = [1],
+                        text = "Page 1", grid = [0,0])
+button_two = PushButton(button_box, command = go_to_page, args = [2],
+                        text = "Page 2", grid = [1,0])
 
 def PrimePumps():
     pour4(1, pr1, 2, pr2, 3, pr3, 4, pr4)
@@ -199,6 +236,7 @@ def PrimePumps():
 
 
 def EmptyPumps():
+    info(title="Warning", text="Are you sure you want to empty?")
     back4(1, pr1, 2, pr2, 3, pr3, 4, pr4)
     time.sleep(max([pr1, pr2, pr3, pr4])/1000.0)
 
@@ -212,7 +250,32 @@ def EmptyPumps():
 
 primeButton = PushButton(page_one, command = PrimePumps,
                         text = "Prime", grid = [0,0])
-emptyButton = PushButton(page_one, command = EmptyPumps,
+emptyButton = PushButton(page_two, command = EmptyPumps,
                         text = "Empty", grid = [1,0])
+
+oneButton = PushButton(page_one, command=pour, args=[1,1000],
+                       text="P1", grid=[1,0])
+twoButton = PushButton(page_one, command=pour, args=[2,1000],
+                       text="P2", grid=[2,0])
+threeButton = PushButton(page_one, command=pour, args=[3,1000],
+                       text="P3", grid=[3,0])
+fourButton = PushButton(page_one, command=pour, args=[4,1000],
+                       text="P4", grid=[4,0])
+fiveButton = PushButton(page_one, command=pour, args=[5,500],
+                       text="P5", grid=[5,0])
+sixButton = PushButton(page_one, command=pour, args=[6,500],
+                       text="P6", grid=[0,1])
+sevenButton = PushButton(page_one, command=pour, args=[7,500],
+                       text="P7", grid=[1,1])
+eightButton = PushButton(page_one, command=pour, args=[8,500],
+                       text="P8", grid=[2,1])
+nineButton = PushButton(page_one, command=pour, args=[9,500],
+                       text="P9", grid=[3,1])
+tenButton = PushButton(page_one, command=pour, args=[10,500],
+                       text="P10", grid=[4,1])
+elevenButton = PushButton(page_one, command=pour, args=[11,500],
+                       text="P11", grid=[5,1])
+twelveButton = PushButton(page_one, command=pour, args=[12,500],
+                       text="P12", grid=[6,1])
 
 app.display()
