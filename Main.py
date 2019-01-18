@@ -443,6 +443,12 @@ Margarita = Recipe(ingredients = [tequila, lime, tripleS],
                    "Suggested: Add 1 pump Simple Syrup", name="Margarita",
                    volume=cup_size)
 
+StrawberryMarg = Recipe(ingredients = [tequila, lime, tripleS],
+                   proportions = [0.57, 0.29, 0.14], image =
+                   "StrawberryMargaritaButton.png", endMessage =
+                   "Suggested: Add 1 pump Simple Syrup\nand 1 pump Strawberry Syrup",
+                   name="Strawberry Margarita", volume=cup_size)
+
 Cosmopolitan = Recipe(ingredients = [vodka, lime, tripleS, cranberry],
                       proportions = [0.60, 0.11, 0.13, 0.16], image =
                       "CosmopolitanButton.png", name="Cosmopolitan", volume=2.5)
@@ -473,7 +479,7 @@ SexOnTheBeach = Recipe(ingredients = [vodka, peachS, orange, cranberry],
 
 Mojito = Recipe(ingredients = [rum, lime, clubS], proportions =
                 [0.23, 0.15, 0.62], image = "MojitoButton.png", endMessage =
-                "Suggested: Add 2 pumps simple syrup + 2 pumps mint syrup" +
+                "Suggested: Add 2 pumps simple syrup + 2 pumps mojito syrup" +
                 "\nTop off with club soda", name="Mojito", volume=cup_size)
 
 PinaColada = Recipe(ingredients=[rum, coconut, pineapple], proportions =
@@ -548,11 +554,16 @@ LemonadeShot = Recipe(ingredients=[lemonade], proportions=
                     [1], image = "LemonadeButton.png",
                     volume=shot_size, name="Lemonade")
 
-recipeList = [DarkAndStormy, Margarita, RumPunch, MoscowMule,
+SweetSourShot = Recipe(ingredients=[sweetSour], proportions=
+                    [1], image = "SweetSourButton.png",
+                    volume=shot_size, name="Sweet and Sour")
+
+recipeList = [DarkAndStormy, Margarita, StrawberryMarg, RumPunch, MoscowMule,
               TequilaSunrise, VodkaCranberry, SexOnTheBeach, Mojito, PinaColada,
               RumAndCoke, VodkaTonic, MouthSmash, LongIsland, RumShot, VodkaShot,
               TequilaShot, GinShot, PeachSShot, TripleSShot, CranberryShot,
-              PineappleShot, OrangeShot, CoconutShot, LimeShot, LemonadeShot]
+              PineappleShot, OrangeShot, CoconutShot, LimeShot, LemonadeShot,
+              SweetSourShot]
               # COSMOPOLITAN TEMPORARILY REMOVED
 
 def exportStats():
