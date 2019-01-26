@@ -18,13 +18,14 @@ tripleS     = 7
 orange      = 8
 cranberry   = 9
 sweetSour   = 10
-gin         = 12
+gin         = 0
 coconut     = 0
 gingerB     = 13
 clubS       = 13
-tonic       = 0
+tonic       = 13
 coke        = 13
 lemonade    = 0
+malibu      = 12
 
 
 #  ---------------GLOBAL VARIALBES-------------------
@@ -505,6 +506,11 @@ LongIsland = Recipe(ingredients=[vodka, rum, gin, tequila, tripleS, sweetSour, c
                     image = "LongIslandButton.png", volume=cup_size,
                     endMessage="Top off with Coke", name="Long Island Iced Tea")
 
+MalibuBayBreeze = Recipe(ingredients=[malibu, cranberry, pineapple],
+                         proportions=[0.28, 0.36, 0.36],
+                         image="MalibuBayBreezeButton.png", volume=cup_size,
+                         name="Malibu Bay Breeze")
+
 # ------ Single ingredients ------
 
 RumShot = Recipe(ingredients=[rum], proportions=[1], image="RumShotButton.png",
@@ -558,7 +564,7 @@ SweetSourShot = Recipe(ingredients=[sweetSour], proportions=
                     [1], image = "SweetSourButton.png",
                     volume=shot_size, name="Sweet and Sour")
 
-recipeList = [DarkAndStormy, Margarita, StrawberryMarg, RumPunch, MoscowMule,
+recipeList = [DarkAndStormy, Margarita, MalibuBayBreeze, StrawberryMarg, RumPunch, MoscowMule,
               TequilaSunrise, VodkaCranberry, SexOnTheBeach, Mojito, PinaColada,
               RumAndCoke, VodkaTonic, MouthSmash, LongIsland, RumShot, VodkaShot,
               TequilaShot, GinShot, PeachSShot, TripleSShot, CranberryShot,
